@@ -128,6 +128,69 @@ mockMvc.perform(post("/api/users")
     .andExpect(status().isCreated());
 ```
 
+## 생성 알고리즘
+
+에이전트가 컨트롤러 소스 코드에서 테스트 코드를 기계적으로 변환하는 규칙입니다.
+
+### @RequestMapping → MockMvc 호출 매핑 규칙
+
+```
+소스 어노테이션 → MockMvc 호출 변환:
+
+@GetMapping("/{path}")            → mockMvc.perform(get("/api/{basePath}/{path}"))
+@GetMapping("/{path}/{id}")       → mockMvc.perform(get("/api/{basePath}/{path}/" + id))
+@PostMapping("/{path}")           → mockMvc.perform(post("/api/{basePath}/{path}")
+                                       .content(jsonContent).contentType(APPLICATION_JSON))
+@PutMapping("/{path}/{id}")       → mockMvc.perform(put("/api/{basePath}/{path}/" + id)
+                                       .content(jsonContent).contentType(APPLICATION_JSON))
+@DeleteMapping("/{path}/{id}")    → mockMvc.perform(delete("/api/{basePath}/{path}/" + id))
+
+basePath = 클래스 레벨 @RequestMapping의 value
+```
+
+### @RequestBody → JSON 요청 본문 생성 규칙
+
+```
+1. @RequestBody 파라미터 타입에서 필드 목록 추출
+2. 각 필드에 더미 데이터 할당 (nh-rules 준수)
+3. ObjectMapper.writeValueAsString()으로 JSON 변환
+
+예시:
+  소스: createUser(@RequestBody CreateUserRequest request)
+  CreateUserRequest 필드: name, email, password
+  변환:
+    CreateUserRequest request = new CreateUserRequest();
+    request.setName("테스트사용자");
+    request.setEmail("test@example.com");
+    request.setPassword("testPassword");
+    String jsonContent = objectMapper.writeValueAsString(request);
+```
+
+### HTTP 상태코드 매핑 규칙
+
+| 소스 패턴 | 테스트 기대 상태코드 |
+|---|---|
+| `@PostMapping` + `@ResponseStatus(CREATED)` | `status().isCreated()` (201) |
+| `@PostMapping` (기본) | `status().isOk()` (200) 또는 `isCreated()` (201) |
+| `@GetMapping` | `status().isOk()` (200) |
+| `@PutMapping` | `status().isOk()` (200) |
+| `@DeleteMapping` + void 반환 | `status().isNoContent()` (204) |
+| `@DeleteMapping` + 반환값 있음 | `status().isOk()` (200) |
+| 서비스에서 `NotFoundException` throw | `status().isNotFound()` (404) |
+| 서비스에서 `DuplicateException` throw | `status().isConflict()` (409) |
+| `@Valid` 검증 실패 | `status().isBadRequest()` (400) |
+
+### 서비스 의존성 → @MockBean 추출 규칙
+
+```
+컨트롤러의 생성자/필드 주입 서비스 → @MockBean으로 선언
+
+예시:
+  소스: public UserController(UserService userService)
+  변환:
+    @MockBean private UserService userService;
+```
+
 ## 출력 형식
 
 - 테스트 클래스명: `{원본클래스명}Test`

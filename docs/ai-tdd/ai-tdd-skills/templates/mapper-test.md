@@ -82,7 +82,7 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.assertj.core.api.Assertions.*;
 
 @MybatisTest
-@Sql("/test-data/{테스트데이터}.sql")  // 테스트 데이터 초기화
+@Sql("/sql/{테스트데이터}.sql")  // 테스트 데이터 초기화
 class {맵퍼클래스명}IntegrationTest {
 
     @Autowired
@@ -141,6 +141,63 @@ class {맵퍼클래스명}IntegrationTest {
 | UPDATE | `when(mapper.update(entity)).thenReturn(1)` | 반환값 검증, 호출 인자 검증 |
 | DELETE | `when(mapper.delete(id)).thenReturn(1)` | 반환값 검증 |
 | COUNT | `when(mapper.count()).thenReturn(10)` | 정확한 카운트 검증 |
+
+## 생성 알고리즘
+
+에이전트가 맵퍼 인터페이스에서 테스트 코드를 기계적으로 변환하는 규칙입니다.
+
+### CRUD 메서드 시그니처 → Mock 패턴 자동 선택
+
+```
+맵퍼 메서드명 패턴 매칭 → Mock/검증 패턴 자동 결정:
+
+메서드명 패턴        → thenReturn 값           → 어설션 패턴
+──────────────────────────────────────────────────────────────
+find*, select*, get* (단건)
+  → thenReturn(entity)   → assertThat(result).isNotNull() + 필드 검증
+
+find*, select*, get* (List 반환)
+  → thenReturn(List.of(entity1, entity2))
+                          → assertThat(result).hasSize(2) + 요소 검증
+
+insert*, save*, create*
+  → thenReturn(1)        → assertThat(result).isEqualTo(1)
+
+update*, modify*
+  → thenReturn(1)        → assertThat(result).isEqualTo(1) + 인자 캡처 검증
+
+delete*, remove*
+  → thenReturn(1)        → assertThat(result).isEqualTo(1)
+
+count*
+  → thenReturn(N)        → assertThat(result).isEqualTo(N)
+```
+
+### Edge Case 자동 생성 규칙
+
+```
+SELECT 메서드:
+  - 존재하지 않는 ID → thenReturn(null) → assertThat(result).isNull()
+  - 빈 목록 → thenReturn(Collections.emptyList()) → assertThat(result).isEmpty()
+
+INSERT/UPDATE/DELETE 메서드:
+  - 대상 없음 → thenReturn(0) → assertThat(result).isZero()
+
+파라미터가 Long/Integer:
+  - null, 0, -1 테스트 추가
+```
+
+### DB 연동 테스트 선택 기준
+
+```
+판단 기준:
+1. 프로젝트에 테스트용 DB 설정(H2/test profile)이 있는가?
+2. SQL 매핑 XML이 복잡한가 (동적 SQL, 조인 등)?
+3. 사용자가 DB 연동 테스트를 요청했는가?
+
+→ 위 조건 중 하나라도 해당 → DB 연동 테스트 병행 고려
+→ 기본값: Mock 기반 테스트
+```
 
 ## 출력 형식
 

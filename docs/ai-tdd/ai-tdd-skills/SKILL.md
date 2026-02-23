@@ -10,9 +10,9 @@
 에이전트가 테스트 생성 요청을 받으면 다음 순서로 처리합니다.
 
 ```
-1. 대상 소스 코드 분석
-2. 클래스 유형 판별 (→ 템플릿 선택)
-3. 프로젝트 설정 확인 (.claude.md)
+1. 프로젝트 설정 확인 (.claude.md)
+2. 대상 소스 코드 분석
+3. 클래스 유형 판별 (→ 템플릿 선택)
 4. 규칙 적용 (constraints/)
 5. 예제 참조 (references/)
 6. 4단계 레벨별 테스트 코드 생성
@@ -142,7 +142,61 @@
 
 ---
 
-## 3. 생성 결과물 표준 구조
+## 3. 메서드 시그니처 → 테스트 코드 변환 규칙
+
+에이전트가 소스 분석 결과에서 테스트 코드를 **기계적으로** 생성하기 위한 상세 매핑 테이블입니다.
+
+### 3.1. 파라미터 타입별 Edge Case 상세 매트릭스
+
+| 파라미터 타입 | 테스트 값 | 예상 동작 | 테스트 수 |
+|---|---|---|---|
+| `String` | `null` | 예외 또는 기본값 반환 | 2 |
+| | `""` (빈 문자열) | 예외 또는 기본값 반환 | |
+| `Long` | `null` | 예외 발생 | 2~3 |
+| | `0L` | 예외 또는 빈 결과 | |
+| | `-1L` | 예외 발생 | |
+| `Integer` | `null` | 예외 발생 | 2~3 |
+| | `0` | 경계값 동작 확인 | |
+| | `-1` | 예외 발생 | |
+| Object (DTO/Request) | `null` | `NullPointerException` 또는 비즈니스 예외 | 2 |
+| | 필수필드 누락 객체 | 유효성 검증 예외 | |
+| `List<T>` | `null` | 예외 또는 빈 처리 | 2 |
+| | `Collections.emptyList()` | 빈 결과 반환 | |
+| `LocalDate` | `null` | 예외 발생 | 1 |
+| `LocalDateTime` | `null` | 예외 발생 | 1 |
+| `boolean` / `Boolean` | `true`, `false` | 각 분기 경로 실행 | 2 (L4에 포함) |
+| `enum` | 각 enum 값 | 값별 분기 실행 | enum 수 (L1/L2에 분배) |
+
+### 3.2. 반환 타입별 어설션 패턴 상세
+
+| 반환타입 | Level 1 (Happy) 어설션 | Level 2 (Edge) 어설션 | 비고 |
+|---|---|---|---|
+| Object (DTO) | `assertThat(result).isNotNull()` | 파라미터 null → 예외 검증 | 핵심 필드별 `isEqualTo()` 추가 |
+| | `assertThat(result.getField()).isEqualTo(expected)` | | |
+| `List<T>` | `assertThat(result).hasSize(N)` | `assertThat(result).isEmpty()` | 첫 요소 필드도 검증 |
+| | `assertThat(result.get(0).getField()).isEqualTo(expected)` | | |
+| `void` | `assertThatCode(() -> sut.method(arg)).doesNotThrowAnyException()` | 파라미터 null → 예외 검증 | `verify()`로 부수효과 필수 검증 |
+| | `verify(mock).method(arg)` | | |
+| `int` (영향 행 수) | `assertThat(result).isEqualTo(1)` | `assertThat(result).isZero()` | 0은 대상 없음 의미 |
+| `boolean` | `assertThat(result).isTrue()` | `assertThat(result).isFalse()` | 양쪽 모두 테스트 |
+| `Optional<T>` | `assertThat(result).isPresent()` | `assertThat(result).isEmpty()` | `get()` 후 필드 검증 |
+
+### 3.3. 메서드 시그니처 → @DisplayName 생성 규칙
+
+| 메서드 패턴 | @DisplayName 생성 규칙 | 예시 |
+|---|---|---|
+| `create{Entity}(Request)` | "유효한 요청으로 {엔티티} 생성 성공" | `"유효한 요청으로 사용자 생성 성공"` |
+| `get{Entity}ById(Long)` | "정상 ID로 {엔티티} 조회 성공" | `"정상 ID로 사용자 조회 성공"` |
+| `getAll{Entity}s()` | "전체 {엔티티} 목록 조회 성공" | `"전체 사용자 목록 조회 성공"` |
+| `update{Entity}(Long, Request)` | "유효한 요청으로 {엔티티} 수정 성공" | `"유효한 요청으로 사용자 수정 성공"` |
+| `delete{Entity}(Long)` | "{엔티티} 삭제 성공" | `"사용자 삭제 성공"` |
+| 예외 테스트 | "{조건}이면 {예외클래스명} 발생" | `"중복 이메일이면 DuplicateEmailException 발생"` |
+| Edge Case | "{파라미터}가 {값}이면 {예상동작}" | `"ID가 null이면 InvalidUserIdException 발생"` |
+| Mutation | "{대상} 시 {검증대상}이 반드시 호출됨" | `"사용자 생성 시 비밀번호 인코딩이 반드시 호출됨"` |
+
+---
+
+## 4. 생성 결과물 표준 구조
 
 생성되는 테스트 클래스는 다음 구조를 따릅니다.
 
@@ -173,16 +227,16 @@ class {클래스명}Test {
 }
 ```
 
-### 3.1. 테스트 유형별 어노테이션
+### 4.1. 테스트 유형별 어노테이션
 
 | 유형 | 어노테이션 | 용도 |
 |---|---|---|
 | Service 단위테스트 | `@ExtendWith(MockitoExtension.class)` | 의존성 Mock, 순수 단위테스트 |
-| Controller 통합테스트 | `@WebMvcTest({Controller}.class)` | MockMvc 기반 HTTP 테스트 |
+| Controller 슬라이스 테스트 | `@WebMvcTest({Controller}.class)` | MockMvc 기반 HTTP 테스트 |
 | Mapper 테스트 | `@MybatisTest` 또는 `@ExtendWith(MockitoExtension.class)` | DB 연동 또는 Mock |
 | Utility 테스트 | 어노테이션 불필요 | static 메서드 직접 호출 |
 
-### 3.2. 필수 검증 항목
+### 4.2. 필수 검증 항목
 
 모든 생성된 테스트에서 다음을 확인합니다.
 
@@ -196,7 +250,7 @@ class {클래스명}Test {
 
 ---
 
-## 4. NH 도메인 특화 검증
+## 5. NH 도메인 특화 검증
 
 NH 프로젝트에서 반드시 확인해야 하는 도메인 규칙입니다.
 
@@ -209,11 +263,11 @@ NH 프로젝트에서 반드시 확인해야 하는 도메인 규칙입니다.
 
 ---
 
-## 5. 검증 프로세스
+## 6. 검증 프로세스
 
 생성된 테스트 코드는 다음 3단계 검증을 통과해야 합니다.
 
-### 5.1. 컴파일 검증
+### 6.1. 컴파일 검증
 
 ```bash
 ./gradlew compileTestJava
@@ -221,7 +275,7 @@ NH 프로젝트에서 반드시 확인해야 하는 도메인 규칙입니다.
 - **합격**: 컴파일 오류 0건
 - **불합격 시**: import 누락, 타입 불일치, 메서드 시그니처 오류 수정
 
-### 5.2. 실행 검증
+### 6.2. 실행 검증
 
 ```bash
 ./gradlew test
@@ -229,12 +283,13 @@ NH 프로젝트에서 반드시 확인해야 하는 도메인 규칙입니다.
 - **합격**: 모든 테스트 PASS
 - **불합격 시**: Mock 설정, 어설션 값, 예외 타입 수정
 
-### 5.3. 커버리지 검증
+### 6.3. 커버리지 검증
 
 ```bash
-./gradlew test jacocoTestReport
+./gradlew test jacocoTestReport jacocoTestCoverageVerification
 ```
 - **합격 기준**: 라인 커버리지 80% 이상, 분기 커버리지 70% 이상
+- `jacocoTestCoverageVerification`이 자동으로 임계값 초과 여부를 판정합니다
 - **불합격 시**: 미커버 분기에 대한 추가 테스트 생성
 
 > 상세 검증 절차는 `verification/` 폴더의 각 문서를 참조

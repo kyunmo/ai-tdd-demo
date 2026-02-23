@@ -118,7 +118,12 @@ class {클래스명}Test {
 
 ### private 생성자 테스트 (유틸리티 클래스의 경우)
 
+소스 코드의 private 생성자 구현에 따라 적절한 패턴을 선택합니다.
+
+**패턴 A: 생성자에서 예외를 던지는 경우**
+
 ```java
+// 소스: private MyUtil() { throw new UnsupportedOperationException("Utility class"); }
 @Test
 @DisplayName("유틸리티 클래스는 인스턴스화할 수 없음")
 void should_throwException_when_instantiated() throws Exception {
@@ -128,6 +133,22 @@ void should_throwException_when_instantiated() throws Exception {
         .hasCauseInstanceOf(UnsupportedOperationException.class);
 }
 ```
+
+**패턴 B: 생성자가 예외를 던지지 않는 경우 (private 접근 제한만)**
+
+```java
+// 소스: private MyUtil() { /* 인스턴스 생성 방지 */ }
+@Test
+@DisplayName("유틸리티 클래스의 private 생성자 확인")
+void should_havePrivateConstructor() throws Exception {
+    var constructor = {유틸클래스}.class.getDeclaredConstructor();
+    assertThat(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers())).isTrue();
+    constructor.setAccessible(true);
+    assertThat(constructor.newInstance()).isNotNull();
+}
+```
+
+> **판단 기준**: 소스 코드의 생성자 본문을 읽고 `throw` 문이 있으면 패턴 A, 없으면 패턴 B를 사용합니다.
 
 ### 마스킹 유틸리티 테스트 (NH 도메인 특화)
 
@@ -141,6 +162,67 @@ void should_throwException_when_instantiated() throws Exception {
 void should_maskData_when_validInput(String input, String expected) {
     assertThat(MaskingUtil.mask(input)).isEqualTo(expected);
 }
+```
+
+## 생성 알고리즘
+
+에이전트가 유틸리티 클래스에서 테스트 코드를 기계적으로 변환하는 규칙입니다.
+
+### static 메서드 → @ParameterizedTest 자동 생성 규칙
+
+```
+각 public static 메서드에 대해:
+
+1. 파라미터가 1개 (String 등 단순 타입):
+   → @ParameterizedTest + @CsvSource로 입출력 쌍 생성
+   → @NullAndEmptySource 추가 (null/empty 검증)
+
+2. 파라미터가 2개 이상:
+   → @ParameterizedTest + @CsvSource (각 파라미터 조합)
+   → 또는 @MethodSource (복잡한 객체 입력)
+
+3. 반환타입이 boolean:
+   → true/false 케이스 모두 @CsvSource에 포함
+
+4. 반환타입이 String (변환/포맷팅):
+   → 입력-기대출력 쌍을 @CsvSource로 최소 3개
+
+생성 예시:
+  소스: public static String maskResidentNumber(String input)
+  변환:
+    @ParameterizedTest
+    @CsvSource({"9001011234567, 900101-*******", "0001011234567, 000101-*******"})
+    void should_maskResidentNumber_when_validInput(String input, String expected) { ... }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void should_throwException_when_inputIsNullOrEmpty(String input) { ... }
+```
+
+### 변환/포맷팅 메서드 테스트 데이터 생성 규칙
+
+```
+테스트 데이터 선정 기준:
+1. 정상 케이스: 대표적인 입력 최소 2~3개
+2. 경계값: 최소 길이, 최대 길이, 특수문자 포함
+3. 오류 케이스: null, 빈 문자열, 잘못된 포맷
+
+마스킹 유틸의 경우 (NH 도메인):
+  - 주민번호: "9001011234567" → 13자리 더미
+  - 카드번호: "1234567890123456" → 16자리 더미
+  - 전화번호: "01012345678" → 11자리 더미
+  ※ 절대 실제 개인정보 사용 금지
+```
+
+### private 생성자 테스트 자동 판단
+
+```
+판단 기준:
+1. 소스에 private 생성자가 있는가?
+   → 없으면: 생성자 테스트 생략
+2. 생성자 본문에 throw 문이 있는가?
+   → 있으면: 패턴 A (assertThatThrownBy + hasCauseInstanceOf)
+   → 없으면: 패턴 B (isPrivate 확인 + newInstance 성공)
 ```
 
 ## 출력 형식

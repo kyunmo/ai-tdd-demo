@@ -107,6 +107,78 @@ class {클래스명}Test {
 | 인자 캡처 | `ArgumentCaptor<{타입}> captor = ArgumentCaptor.forClass({타입}.class)` |
 | 예외 발생 시 Mock | `when({mock}.{메서드}()).thenThrow(new {예외}())` |
 
+## 생성 알고리즘
+
+에이전트가 서비스 소스 코드에서 테스트 코드를 기계적으로 변환하는 규칙입니다.
+
+### 생성자 파라미터 → @Mock 추출 규칙
+
+```
+입력: 소스 클래스의 생성자(또는 @RequiredArgsConstructor 필드)
+
+변환 규칙:
+1. 생성자의 각 파라미터 → @Mock private {타입} {이름};
+2. 대상 클래스 → @InjectMocks private {클래스} {camelCase(클래스명)};
+
+예시:
+  소스: public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder)
+  변환:
+    @Mock private UserMapper userMapper;
+    @Mock private PasswordEncoder passwordEncoder;
+    @InjectMocks private UserService userService;
+```
+
+### 메서드 시그니처 → 테스트 메서드 생성 규칙
+
+```
+각 public 메서드에 대해:
+
+1. Happy Case (Level 1):
+   - 모든 의존성 Mock에 when().thenReturn() 설정
+   - 메서드 호출 후 반환값 검증
+   - 부수효과 verify() 추가
+
+2. Edge Case (Level 2):
+   - 각 파라미터의 타입별 Edge Case 매트릭스 적용 (SKILL.md 3.1 참조)
+
+3. Exception (Level 3):
+   - 소스의 각 throw 문에 대해:
+     a. throw 조건을 유발하는 Mock 설정 (when().thenReturn() 또는 thenThrow())
+     b. assertThatThrownBy()로 예외 타입 + 메시지 검증
+
+4. Mutation (Level 4):
+   - 도메인 로직 호출 verify (암호화, 감사로그 등)
+   - 호출 순서가 중요한 경우 InOrder 검증
+   - never() 검증 (예외 시 후속 메서드 미호출 등)
+```
+
+### void 메서드 테스트 패턴
+
+```java
+// void 메서드는 반환값 검증 대신 부수효과 검증
+@Test
+@DisplayName("한글 시나리오 설명")
+void should_{동작}_when_{조건}() {
+    // Given
+    when({mock}.{조회메서드}({인자})).thenReturn({데이터});
+
+    // When
+    {인스턴스}.{voidメ서드}({인자});
+
+    // Then - 부수효과 검증
+    verify({mock}).{부수효과메서드}({인자});
+    verify({mock}, never()).{호출안되어야할메서드}(any());
+}
+```
+
+### 위임 메서드 테스트 패턴
+
+```
+소스에서 다른 메서드를 호출하는 경우 (예: deleteUser → getUserById):
+- 위임 대상 메서드의 예외가 전파되는지 검증
+- 위임 메서드가 호출되었는지 verify (간접 검증)
+```
+
 ## 출력 형식
 
 - 테스트 클래스명: `{원본클래스명}Test`

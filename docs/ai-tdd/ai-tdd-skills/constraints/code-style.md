@@ -60,7 +60,7 @@ void should_throwException_when_emailIsDuplicate() {
     // When & Then
     assertThatThrownBy(() -> userService.createUser(request))
         .isInstanceOf(DuplicateEmailException.class)
-        .hasMessage("Email already exists");
+        .hasMessage("이미 존재하는 이메일입니다");
 }
 
 // 나쁜 예시 - try-catch 사용
@@ -70,7 +70,7 @@ void testDuplicateEmail() {
         userService.createUser(request);
         fail("예외가 발생해야 합니다");
     } catch (DuplicateEmailException e) {
-        assertEquals("Email already exists", e.getMessage());
+        assertEquals("이미 존재하는 이메일입니다", e.getMessage());
     }
 }
 ```
@@ -132,7 +132,7 @@ assertEquals(3, list.size());
 // 좋은 예시 - assertThatThrownBy
 assertThatThrownBy(() -> userService.getUserById(null))
     .isInstanceOf(InvalidUserIdException.class)
-    .hasMessage("Invalid user ID");
+    .hasMessage("유효하지 않은 사용자 ID입니다");
 
 // 좋은 예시 - assertThatCode (예외 없음 확인)
 assertThatCode(() -> userService.createUser(validRequest))
@@ -197,7 +197,7 @@ import com.nhcard.al.tt.mapper.UserMapper;
 // 좋은 예시 - 체이닝은 줄바꿈 + 들여쓰기
 assertThatThrownBy(() -> userService.createUser(request))
     .isInstanceOf(DuplicateEmailException.class)
-    .hasMessage("Email already exists");
+    .hasMessage("이미 존재하는 이메일입니다");
 
 mockMvc.perform(get("/api/users/{id}", 1L)
         .contentType(MediaType.APPLICATION_JSON))
@@ -206,7 +206,7 @@ mockMvc.perform(get("/api/users/{id}", 1L)
     .andExpect(jsonPath("$.name").value("테스트사용자"));
 
 // 나쁜 예시 - 한 줄에 모두
-assertThatThrownBy(() -> userService.createUser(request)).isInstanceOf(DuplicateEmailException.class).hasMessage("Email already exists");
+assertThatThrownBy(() -> userService.createUser(request)).isInstanceOf(DuplicateEmailException.class).hasMessage("이미 존재하는 이메일입니다");
 ```
 
 ---
@@ -228,7 +228,9 @@ assertThatThrownBy(() -> userService.createUser(request)).isInstanceOf(Duplicate
 | 패턴 | 문제 | 대안 |
 |---|---|---|
 | `@SpringBootTest` (단위테스트에) | 전체 컨텍스트 로드, 느림 | `@ExtendWith(MockitoExtension.class)` |
-| `@Autowired` + `@MockBean` 혼용 | 컨텍스트 캐시 무효화 | `@Mock` + `@InjectMocks` |
+| `@MockBean` (Service 단위테스트에) | 컨텍스트 캐시 무효화 | `@Mock` + `@InjectMocks` |
+
+> **주의**: `@WebMvcTest` Controller 테스트에서는 `@MockBean`이 **필수**입니다. 위 규칙은 Service/Mapper 단위테스트에만 적용됩니다.
 | `Thread.sleep()` | 비결정적, 느림 | `await().atMost()` 또는 Mock |
 | `System.out.println()` | 디버깅 잔재 | 로거 또는 제거 |
 | `@Disabled` 남용 | 실패 테스트 은폐 | 수정 또는 삭제 |

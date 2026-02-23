@@ -324,13 +324,14 @@ class MaskingUtilTest {
     }
 
     @Test
-    @DisplayName("private 생성자 호출 시 인스턴스 생성 방지 확인")
-    void should_preventInstantiation_when_callingConstructor() throws Exception {
+    @DisplayName("유틸리티 클래스의 private 생성자 확인")
+    void should_havePrivateConstructor() throws Exception {
         // Given
         Constructor<MaskingUtil> constructor = MaskingUtil.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
 
-        // When & Then - 인스턴스가 생성되더라도 유틸리티 클래스임을 확인
+        // When & Then - private 접근 제한 확인 + 인스턴스 생성 가능 여부 확인
+        assertThat(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers())).isTrue();
+        constructor.setAccessible(true);
         assertThat(constructor.newInstance()).isNotNull();
     }
 }
@@ -369,6 +370,9 @@ class MaskingUtilTest {
 | Level 2: Edge Case | 6개 | `@ParameterizedTest` + `@CsvSource`로 다양한 입력 |
 | Level 3: Exception | 7개 | `@NullAndEmptySource`, `@ValueSource`로 비정상 입력 |
 | Level 4: Mutation | 4개 | 원본 데이터 미포함 확인, 패턴 매칭, private 생성자 |
+
+> 이 예제는 `@ParameterizedTest`의 다양한 패턴을 보여주기 위해 Level 2~3 비중이 목표(40/30/20/10)보다 높습니다.
+> 실제 생성 시 소스 코드의 메서드 수에 따라 비율을 40-30-20-10에 가깝게 조정합니다.
 
 ### 3.4. @ParameterizedTest 사용 패턴 요약
 

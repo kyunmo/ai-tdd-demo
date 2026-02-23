@@ -10,7 +10,7 @@
 ### 1.1. 폴더 구조
 
 ```
-docs/ai-tdd-skills/
+docs/ai-tdd-skills/            # 프로젝트에 복사된 후의 경로 (원본: docs/ai-tdd/ai-tdd-skills/)
 ├── .claude.md                  # 프로젝트 설정 (커스터마이징 포인트)
 ├── SKILL.md                    # 공통 생성 가이드 (핵심)
 ├── document-guide.md           # 이 문서 (문서 가이드)
@@ -42,18 +42,20 @@ docs/ai-tdd-skills/
 
 ```mermaid
 graph TD
-    A[".claude.md<br>(프로젝트 설정)"] --> B["SKILL.md<br>(생성 가이드)"]
-    B --> C{"클래스 유형 판별"}
+    A[".claude.md<br>(1. 프로젝트 설정)"] --> S["소스 코드 분석<br>(2. 대상 파일 읽기)"]
+    S --> B["SKILL.md<br>(생성 가이드 참조)"]
+    B --> C{"3. 클래스 유형 판별"}
     C -->|Service| T1["templates/service-test.md"]
     C -->|Controller| T2["templates/controller-test.md"]
     C -->|Mapper| T3["templates/mapper-test.md"]
     C -->|Utility| T4["templates/util-test.md"]
-    T1 & T2 & T3 & T4 --> R["constraints/<br>(규칙 적용)"]
-    R --> E["references/examples/<br>(예제 참조)"]
-    E --> G["테스트 코드 생성"]
-    G --> V["verification/<br>(검증 절차)"]
+    T1 & T2 & T3 & T4 --> R["constraints/<br>(4. 규칙 적용)"]
+    R --> E["references/examples/<br>(5. 예제 참조)"]
+    E --> G["6. 테스트 코드 생성"]
+    G --> V["verification/<br>(7. 검증 절차)"]
 
     style A fill:#e1f5fe
+    style S fill:#b3e5fc
     style B fill:#bbdefb
     style C fill:#fff9c4
     style R fill:#ffcdd2
@@ -93,7 +95,7 @@ graph TD
 | 파일 | 대상 | 판별 기준 | 테스트 방식 |
 |---|---|---|---|
 | `service-test.md` | `@Service`, `@Component` | 비즈니스 로직 클래스 | `@ExtendWith(MockitoExtension.class)` + `@Mock` 단위테스트 |
-| `controller-test.md` | `@RestController`, `@Controller` | REST API 클래스 | `@WebMvcTest` + MockMvc 통합테스트 |
+| `controller-test.md` | `@RestController`, `@Controller` | REST API 클래스 | `@WebMvcTest` + MockMvc 슬라이스 테스트 |
 | `mapper-test.md` | `@Mapper`, MyBatis 인터페이스 | DB 접근 클래스 | `@MybatisTest` 또는 Mock 기반 |
 | `util-test.md` | static 메서드, Helper | 유틸리티 클래스 | 어노테이션 없이 직접 호출 |
 

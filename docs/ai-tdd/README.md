@@ -53,6 +53,7 @@ docs/ai-tdd/
 ├── ai-tdd-skills/             ← 스킬 문서 세트 (프로젝트에 복사)
 │   ├── .claude.md             # 프로젝트 설정 (커스터마이징 필요)
 │   ├── SKILL.md               # 공통 생성 가이드
+│   ├── document-guide.md      # 문서 가이드 (문서 간 관계 설명)
 │   ├── templates/             # 계층별 테스트 템플릿
 │   │   ├── service-test.md
 │   │   ├── controller-test.md

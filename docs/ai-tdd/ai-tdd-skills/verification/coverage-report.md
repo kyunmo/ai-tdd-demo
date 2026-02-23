@@ -180,7 +180,51 @@ void should_throwException_when_dbError() {
 
 ---
 
-## 6. 커버리지 제외 대상
+## 6. 뮤테이션 커버리지 검증 (선택)
+
+> 뮤테이션 커버리지 목표 수치는 `constraints/test-coverage.md`에 정의되어 있습니다 (최소 65%).
+
+### 6.1. PIT 실행 명령어
+
+```bash
+./gradlew pitest
+```
+
+### 6.2. PIT 보고서 위치
+
+| 형식 | 경로 |
+|---|---|
+| HTML | `build/reports/pitest/index.html` |
+
+### 6.3. PIT 보고서 읽는 방법
+
+| 표시 | 의미 | 조치 |
+|---|---|---|
+| **KILLED** (초록) | 테스트가 변이를 감지함 | 정상 (테스트 품질 양호) |
+| **SURVIVED** (빨강) | 테스트가 변이를 감지 못함 | Level 4 Mutation 테스트 추가 필요 |
+| **NO_COVERAGE** (회색) | 해당 라인에 테스트 없음 | Level 1~3 테스트를 먼저 추가 |
+
+### 6.4. SURVIVED 변이 해결 방법
+
+SURVIVED 변이가 있으면 해당 코드에 대해 **Level 4: Mutation Testing** 테스트를 추가합니다.
+
+```java
+// 예: 조건문 변이가 SURVIVED인 경우
+// 소스: if (user != null) → 변이: if (user == null)
+
+// 추가할 테스트:
+@Test
+@DisplayName("사용자 존재 시 정상 처리, 미존재 시 예외 발생")
+void should_handleBothCases_when_userExistsOrNot() {
+    // 양쪽 분기를 모두 테스트하여 변이를 감지
+}
+```
+
+> PIT 플러그인 설정 방법은 `constraints/test-coverage.md` 참조
+
+---
+
+## 7. 커버리지 제외 대상
 
 다음 항목은 커버리지 측정에서 제외할 수 있습니다.
 

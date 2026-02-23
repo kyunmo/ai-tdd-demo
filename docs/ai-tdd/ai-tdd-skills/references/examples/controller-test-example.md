@@ -59,6 +59,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -335,3 +339,6 @@ class UserControllerTest {
 | Level 2: Edge Case | 3개 | 빈 목록, 필수필드 누락, 이메일 형식 오류 |
 | Level 3: Exception | 3개 | 404 Not Found, 409 Conflict, 400 Invalid ID |
 | Level 4: Mutation | 3개 | 서비스 호출 파라미터 검증(2), 비밀번호 미노출 |
+
+> 이 예제는 HTTP 상태코드별 분기를 충실히 검증하기 위해 Level 2~4 비중이 목표(40/30/20/10)보다 높습니다.
+> 실제 생성 시 소스 코드의 엔드포인트 수에 따라 비율을 40-30-20-10에 가깝게 조정합니다.

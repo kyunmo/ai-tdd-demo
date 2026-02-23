@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nh.ai.tdd.demo.mapper.UserMapper">
+
+    <select id="findById" resultType="User">
+        SELECT id, name, email, password, phone_number, created_at, updated_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByEmail" resultType="User">
+        SELECT id, name, email, password, phone_number, created_at, updated_at
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <select id="findAll" resultType="User">
+        SELECT id, name, email, password, phone_number, created_at, updated_at
+        FROM users
+        ORDER BY id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (name, email, password, phone_number)
+        VALUES (#{name}, #{email}, #{password}, #{phoneNumber})
+    </insert>
+
+    <update id="update">
+        UPDATE users
+        SET name = #{name},
+            email = #{email},
+            phone_number = #{phoneNumber},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM users
+    </select>
+
+</mapper>

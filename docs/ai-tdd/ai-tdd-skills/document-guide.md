@@ -134,8 +134,9 @@ graph TD
 | 1 | `compile-check.md` | `./gradlew compileTestJava` | 컴파일 오류 0건 |
 | 2 | `test-execution.md` | `./gradlew test` | 모든 테스트 PASS |
 | 3 | `coverage-report.md` | `./gradlew test jacocoTestReport` | 라인 80%, 분기 70% 이상 |
+| 4 | `performance-report.md` | (수동 작성) | 도입 전후 성과 비교 리포트 |
 
-**커스터마이징**: 불필요 (100% 공통)
+**커스터마이징**: `performance-report.md`는 프로젝트별 수치 기입 필요, 나머지 불필요
 
 ---
 

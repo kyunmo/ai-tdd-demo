@@ -1,44 +1,29 @@
 spring:
   application:
-    name: ai-tdd-demo
+    name: ai-tdd-demo-test
 
-  # H2 Database
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
 
-  # H2 Console
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
 
-  # Schema init
   sql:
     init:
       mode: always
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
 
-# MyBatis
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: nh.ai.tdd.demo.domain
   configuration:
     map-underscore-to-camel-case: true
 
-# JWT
 jwt:
-  secret: ThisIsASecretKeyForJwtTokenGenerationThatIsAtLeast256BitsLong!!
+  secret: TestSecretKeyForJwtTokenGenerationThatIsAtLeast256BitsLong!!
   expiration-ms: 3600000
-
-# Swagger
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-  api-docs:
-    path: /v3/api-docs

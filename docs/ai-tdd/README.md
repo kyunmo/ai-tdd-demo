@@ -13,7 +13,8 @@ AI TDD 시스템은 **두 가지 핵심 폴더**로 구성됩니다.
 
 | 폴더 | 역할 | 설치 위치 |
 |---|---|---|
-| `ai-tdd-agent/` | Claude Code **에이전트 스킬** 정의 | `~/.claude/agents/ai-tdd-agent/` |
+| `ai-tdd-agent/` | Claude Code **테스트 생성 에이전트** 정의 | `~/.claude/agents/ai-tdd-agent/` |
+| `ai-tdd-review-agent/` | 생성된 테스트의 **품질 검증 에이전트** 정의 | `~/.claude/agents/ai-tdd-review-agent/` |
 | `ai-tdd-skills/` | 에이전트가 참조하는 **규칙/템플릿/예제** 문서 | 프로젝트 `docs/ai-tdd-skills/` |
 
 - **ai-tdd-agent**: Claude Code가 "테스트 생성" 요청을 받으면 실행되는 에이전트의 동작 방식, 역할, 판단 기준을 정의
@@ -48,6 +49,10 @@ docs/ai-tdd/
 ├── README.md                  ← 이 문서 (적용 가이드)
 │
 ├── ai-tdd-agent/              ← 에이전트 스킬 (Claude Code에 설치)
+│   ├── SKILL.md               # 테스트 생성 에이전트
+│   └── batch-execution.md     # 배치(다중 클래스) 실행 가이드
+│
+├── ai-tdd-review-agent/       ← 리뷰 에이전트 (생성된 테스트 품질 검증)
 │   └── SKILL.md
 │
 ├── ai-tdd-skills/             ← 스킬 문서 세트 (프로젝트에 복사)
@@ -73,7 +78,8 @@ docs/ai-tdd/
 │   └── verification/          # 검증 절차
 │       ├── compile-check.md
 │       ├── test-execution.md
-│       └── coverage-report.md
+│       ├── coverage-report.md
+│       └── performance-report.md  # 도입 성과 리포트 템플릿
 │
 └── plan/                      ← 기획/설계 문서 (배포 대상 아님)
     ├── PRD-AI-TDD.md
@@ -358,10 +364,13 @@ graph TD
 ## 6. 주요 기능
 
 1. **자동 테스트 생성**: 4단계 테스트 레벨(Happy/Edge/Exception/Mutation) 기반
-2. **NH 규칙 준수**: 개인정보 마스킹, Petra 암호화, 감사로그 등 도메인 규칙 적용
-3. **포괄적 커버리지**: 80% 이상 라인 커버리지 목표
-4. **에이전트 기반**: Claude Code 에이전트로 프롬프트 작성 없이 바로 사용
-5. **프로젝트별 맞춤형**: `.claude.md`만 수정하여 즉시 적용 가능
+2. **자동 품질 검증**: 리뷰 에이전트가 생성된 테스트의 품질을 정량 평가
+3. **배치 실행**: 패키지/폴더 단위 다중 클래스 일괄 테스트 생성
+4. **NH 규칙 준수**: 개인정보 마스킹, Petra 암호화, 감사로그 등 도메인 규칙 적용
+5. **포괄적 커버리지**: 80% 이상 라인 커버리지 목표
+6. **성과 측정**: 도입 전후 정량 지표 비교 리포트 자동 생성
+7. **에이전트 기반**: Claude Code 에이전트로 프롬프트 작성 없이 바로 사용
+8. **프로젝트별 맞춤형**: `.claude.md`만 수정하여 즉시 적용 가능
 
 ---
 

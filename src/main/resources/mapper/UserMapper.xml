@@ -5,26 +5,26 @@
 <mapper namespace="nh.ai.tdd.demo.mapper.UserMapper">
 
     <select id="findById" resultType="User">
-        SELECT id, name, email, password, phone_number, created_at, updated_at
+        SELECT id, name, email, password, phone_number, role, created_at, updated_at
         FROM users
         WHERE id = #{id}
     </select>
 
     <select id="findByEmail" resultType="User">
-        SELECT id, name, email, password, phone_number, created_at, updated_at
+        SELECT id, name, email, password, phone_number, role, created_at, updated_at
         FROM users
         WHERE email = #{email}
     </select>
 
     <select id="findAll" resultType="User">
-        SELECT id, name, email, password, phone_number, created_at, updated_at
+        SELECT id, name, email, password, phone_number, role, created_at, updated_at
         FROM users
         ORDER BY id
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (name, email, password, phone_number)
-        VALUES (#{name}, #{email}, #{password}, #{phoneNumber})
+        INSERT INTO users (name, email, password, phone_number, role)
+        VALUES (#{name}, #{email}, #{password}, #{phoneNumber}, #{role})
     </insert>
 
     <update id="update">

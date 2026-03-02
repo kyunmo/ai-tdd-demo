@@ -61,6 +61,6 @@ public class MaskingUtil {
             return name;
         }
 
-        return name.charAt(0) + "*".repeat(name.length() - 1);
+        return name.charAt(0) + new String(new char[name.length() - 1]).replace('\0', '*');
     }
 }

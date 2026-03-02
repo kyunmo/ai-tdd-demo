@@ -6,13 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import nh.ai.tdd.demo.domain.User;
 import nh.ai.tdd.demo.dto.CreateUserRequest;
-import nh.ai.tdd.demo.exception.DuplicateEmailException;
-import nh.ai.tdd.demo.exception.UserNotFoundException;
 import nh.ai.tdd.demo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -73,24 +72,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> getMaskedPhone(
             @Parameter(description = "사용자 ID") @PathVariable Long id) {
         String masked = userService.getMaskedPhoneNumber(id);
-        return ResponseEntity.ok(Map.of("maskedPhoneNumber", masked));
+        return ResponseEntity.ok(Collections.singletonMap("maskedPhoneNumber", masked));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateEmail(DuplicateEmailException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", ex.getMessage()));
-    }
 }

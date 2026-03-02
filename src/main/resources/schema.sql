@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS notices;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
@@ -6,6 +7,17 @@ CREATE TABLE users (
     email       VARCHAR(200) NOT NULL UNIQUE,
     password    VARCHAR(200) NOT NULL,
     phone_number VARCHAR(20),
+    role        VARCHAR(20) DEFAULT 'ROLE_USER',
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE notices (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title       VARCHAR(200) NOT NULL,
+    content     CLOB NOT NULL,
+    author      VARCHAR(100) NOT NULL,
+    view_count  INT DEFAULT 0,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

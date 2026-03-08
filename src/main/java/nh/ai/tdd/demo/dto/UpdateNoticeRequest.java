@@ -1,8 +1,15 @@
 package nh.ai.tdd.demo.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 public class UpdateNoticeRequest {
 
+    @NotBlank(message = "제목은 필수입니다")
+    @Size(max = 200, message = "제목은 200자 이하여야 합니다")
     private String title;
+
+    @NotBlank(message = "내용은 필수입니다")
     private String content;
 
     public UpdateNoticeRequest() {

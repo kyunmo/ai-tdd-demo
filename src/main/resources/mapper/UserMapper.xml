@@ -31,6 +31,7 @@
         UPDATE users
         SET name = #{name},
             email = #{email},
+            password = #{password},
             phone_number = #{phoneNumber},
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}

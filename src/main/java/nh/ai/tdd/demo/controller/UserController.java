@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "등록 성공")
     @ApiResponse(responseCode = "409", description = "이메일 중복")
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody CreateUserRequest request) {
         User user = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -54,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(
             @Parameter(description = "사용자 ID") @PathVariable Long id,
-            @RequestBody CreateUserRequest request) {
+            @Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 

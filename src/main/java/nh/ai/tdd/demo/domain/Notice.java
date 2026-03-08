@@ -8,7 +8,7 @@ public class Notice {
     private String title;
     private String content;
     private String author;
-    private int viewCount;
+    private int viewCount = 0;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

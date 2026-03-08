@@ -22,6 +22,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.2")
     implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
@@ -41,14 +42,14 @@ tasks.withType<Test> {
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.7"
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.required.set(true)
-        html.required.set(true)
+        xml.isEnabled = true
+        html.isEnabled = true
     }
 }
 
@@ -68,7 +69,7 @@ tasks.jacocoTestCoverageVerification {
 }
 
 pitest {
-    junit5PluginVersion.set("1.1.2")
+    junit5PluginVersion.set("0.15")
     targetClasses.set(setOf("nh.ai.tdd.demo.*"))
     targetTests.set(setOf("nh.ai.tdd.demo.*"))
     mutationThreshold.set(65)

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Tag(name = "인증 API", description = "로그인 및 회원가입 API")
 @RestController
 @RequestMapping("/api/auth")
@@ -30,7 +32,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "로그인 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
@@ -38,7 +40,7 @@ public class AuthController {
     @ApiResponse(responseCode = "201", description = "가입 성공")
     @ApiResponse(responseCode = "409", description = "이메일 중복")
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(request));
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import java.util.List;
 
 @Tag(name = "공지사항 API", description = "공지사항 CRUD API")
@@ -43,7 +45,7 @@ public class NoticeController {
     @Operation(summary = "공지사항 등록", description = "새로운 공지사항을 등록합니다")
     @ApiResponse(responseCode = "201", description = "등록 성공")
     @PostMapping
-    public ResponseEntity<Notice> createNotice(@RequestBody CreateNoticeRequest request) {
+    public ResponseEntity<Notice> createNotice(@Valid @RequestBody CreateNoticeRequest request) {
         Notice notice = noticeService.createNotice(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(notice);
     }
@@ -54,7 +56,7 @@ public class NoticeController {
     @PutMapping("/{id}")
     public ResponseEntity<Notice> updateNotice(
             @Parameter(description = "공지사항 ID") @PathVariable Long id,
-            @RequestBody UpdateNoticeRequest request) {
+            @Valid @RequestBody UpdateNoticeRequest request) {
         return ResponseEntity.ok(noticeService.updateNotice(id, request));
     }
 

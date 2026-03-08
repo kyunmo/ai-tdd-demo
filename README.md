@@ -54,7 +54,7 @@ ai-tdd-demo/
 ├── docs/
 │   ├── ai-tdd/                          # AI TDD 스킬 문서 (핵심)
 │   │   ├── ai-tdd-agent/SKILL.md        # 에이전트 행동 지시서
-│   │   ├── ai-tdd-skills/SKILL.md       # 공통 테스트 생성 가이드
+│   │   ├── ai-tdd-skills/GENERATION-GUIDE.md  # 공통 테스트 생성 가이드
 │   │   ├── ai-tdd-skills/templates/     # 레이어별 테스트 템플릿 (4종)
 │   │   ├── ai-tdd-skills/constraints/   # 제약조건 (코드스타일, 네이밍, NH규칙)
 │   │   ├── ai-tdd-skills/references/    # 참조 예제 (4종)

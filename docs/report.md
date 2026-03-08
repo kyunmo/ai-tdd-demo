@@ -15,7 +15,7 @@
 - `docs/ai-tdd/plan/2026-02-10-prd-ai-tdd.md` (PRD 최신)
 - `docs/ai-tdd/plan/2026-02-09-compare-ai-tdd.md` (비교 분석)
 - `docs/ai-tdd/ai-tdd-agent/SKILL.md` (에이전트 스킬 정의)
-- `docs/ai-tdd/ai-tdd-skills/SKILL.md` (공통 생성 가이드)
+- `docs/ai-tdd/ai-tdd-skills/GENERATION-GUIDE.md` (공통 생성 가이드)
 - `docs/ai-tdd/ai-tdd-skills/.claude.md` (프로젝트 설정)
 
 #### 문서 역할 정의

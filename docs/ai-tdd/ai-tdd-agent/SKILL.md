@@ -190,7 +190,7 @@ docs/ai-tdd-skills/
 
 ### 3.6. [6단계] 테스트 코드 생성
 
-`docs/ai-tdd-skills/SKILL.md`의 4단계 레벨과 생성 결과물 표준 구조를 따라 테스트 코드를 생성합니다.
+`docs/ai-tdd-skills/GENERATION-GUIDE.md`의 4단계 레벨과 생성 결과물 표준 구조를 따라 테스트 코드를 생성합니다.
 
 #### 테스트 수 산출 공식
 
@@ -265,7 +265,7 @@ L1 = 4, L3 = 4, L4 = 2, L2 = 12 - 4 - 4 - 2 = 2
 | `List` | `null`, `Collections.emptyList()` | 2 |
 | `LocalDate` / `LocalDateTime` | `null` | 1 |
 
-> 상세 매트릭스는 `docs/ai-tdd-skills/SKILL.md`의 "파라미터 타입별 Edge Case 상세 매트릭스" 참조
+> 상세 매트릭스는 `docs/ai-tdd-skills/GENERATION-GUIDE.md`의 "파라미터 타입별 Edge Case 상세 매트릭스" 참조
 
 #### 테스트 클래스 구조
 

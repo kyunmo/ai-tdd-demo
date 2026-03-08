@@ -313,7 +313,7 @@ class UserServiceTest {
 ```mermaid
 graph TD
     A[에이전트 SKILL.md] --> B[.claude.md<br>프로젝트 설정]
-    A --> C[ai-tdd-skills/SKILL.md<br>공통 생성 가이드]
+    A --> C[ai-tdd-skills/GENERATION-GUIDE.md<br>공통 생성 가이드]
 
     C --> T[templates/<br>계층별 템플릿]
     C --> R[constraints/<br>규칙/제약사항]

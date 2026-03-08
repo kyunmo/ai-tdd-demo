@@ -55,7 +55,7 @@ nh.ai.tdd.demo
 | 에이전트 행동 지시서 | `docs/ai-tdd/ai-tdd-agent/SKILL.md` |
 | 배치 실행 가이드 | `docs/ai-tdd/ai-tdd-agent/batch-execution.md` |
 | 리뷰 에이전트 | `docs/ai-tdd/ai-tdd-review-agent/SKILL.md` |
-| 공통 테스트 생성 가이드 | `docs/ai-tdd/ai-tdd-skills/SKILL.md` |
+| 공통 테스트 생성 가이드 | `docs/ai-tdd/ai-tdd-skills/GENERATION-GUIDE.md` |
 | 레이어별 템플릿 | `docs/ai-tdd/ai-tdd-skills/templates/*.md` |
 | 제약조건 | `docs/ai-tdd/ai-tdd-skills/constraints/*.md` |
 | 참조 예제 | `docs/ai-tdd/ai-tdd-skills/references/examples/*.md` |
@@ -71,7 +71,7 @@ nh.ai.tdd.demo
 
 **1. AI TDD 스킬 문서 자율 실행 수준 고도화**
 - 6개 BLOCKING gap(B1~B6) 해결: 소스 탐색 알고리즘, 테스트 수 산출 공식, 파라미터→테스트 매핑, 메서드→테스트 변환, 기존 테스트 자율 처리, 에러 복구 의사결정 트리
-- 수정 파일 6개: `ai-tdd-agent/SKILL.md`, `ai-tdd-skills/SKILL.md`, 4개 템플릿
+- 수정 파일 6개: `ai-tdd-agent/SKILL.md`, `ai-tdd-skills/GENERATION-GUIDE.md`, 4개 템플릿
 
 **2. PRD v3 / TRD v3 문서 작성**
 - v2 대비 자율 실행 프로세스, 알고리즘 상세, 검증 방법 추가

@@ -67,16 +67,7 @@ public class UserService {
     public List<User> getAllUsers() {
         return userMapper.findAll();
     }
-    
-    public List<User> getAllUsers() {
-        return userMapper.findAll();
-    }
 
-    public void deleteUser(Long id) {
-        getUserById(id);
-        userMapper.deleteById(id);
-    }
-    
 }
 ```
 
@@ -92,10 +83,10 @@ public class UserService {
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @MockBean
+    @Mock
     private UserMapper userMapper;
 
-    @MockBean
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks

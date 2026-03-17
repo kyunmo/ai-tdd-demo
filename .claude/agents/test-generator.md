@@ -40,7 +40,7 @@ permissionMode: acceptEdits
 
 ```
 docs/ai-tdd-skills/
-├── .claude.md                          ← [1단계] 프로젝트 설정 (가장 먼지 읽기)
+├── .claude.md                          ← [1단계] 프로젝트 설정 (가장 먼저 읽기)
 ├── generation-guide.md                 ← [2단계] 공통 생성 가이드 (핵심 참조)
 ├── templates/                          ← [3단계] 계층별 테스트 템플릿
 │   ├── controller-test.md
@@ -87,7 +87,7 @@ docs/ai-tdd-skills/
 사용자가 클래스명만 제공한 경우, 다음 순서로 소스 파일을 찾습니다.
 
 ```
-입력: {ClassName} (예:UserService)
+입력: {ClassName} (예: UserService)
 
 검색 순서:
 1. Glob: src/main/java/**/{ClassName}.java
@@ -115,7 +115,7 @@ docs/ai-tdd-skills/
 | public 메서드 목록 | 메서드명, 파라미터, 반환타입, throws 절 | 테스트 대상 식별 |
 | throw 문 | 예외 클래스, 발생 조건 | Level 3 Exception 테스트 |
 | if/else 분기 | 조건문, 분기 경로 | Level 2 Edge + Level 4 Mutation |
-| 외부 의존성 호출 | `mapper.inser()`, `encoder.encode()` 등 | verify 대상 식별 |
+| 외부 의존성 호출 | `mapper.insert()`, `encoder.encode()` 등 | verify 대상 식별 |
 | 도메인 특화 로직 | 마스킹, 암호화, 감사로그 관련 코드 | NH 도메인 검증 대상 |
 
 **분석 결과 포맷** (에이전트가 내부적으로 정리):
@@ -205,18 +205,21 @@ docs/ai-tdd-skills/
   throw_statements = 소스의 throw 문 수 (중복 예외 제거)
   domain_checks = 도메인 검증 항목 수 (암호화, 마스킹, 감사로그 등)
 
-총 테스트 수 = max(15, public_methods * 3)
-
-레벨별 분배:
+레벨별 산출 (고정 기준):
   Level 1 (Happy Case) = public_methods * 1         // 정상 시나리오 (필수)
-  Level 2 (Edge Case) = ceil(총 * 0.30)             // 30% (내결함성)
   Level 3 (Exception) = throw_statements            // throw 문 1:1 매핑
   Level 4 (Mutation) = public_methods * 1           // 각 메서드 호출 검증 (필수)
+  Level 2 (Edge Case) = 나머지                       // L1+L3+L4 미커버 경계값
+
+  최소 총 테스트 수 = max(15, L1 + L2 + L3 + L4)
+  L2 최소 보장 = max(3, public_methods)              // 최소 3개 이상
 
 > **설계 원칙**:
+> - L1, L3, L4는 소스 코드에서 기계적으로 산출 (고정)
+> - L2는 파라미터 유효성 검증으로, 커버리지 목표 달성을 위해 유동 조절
 > - L1: 정상 동작 검증 (반환값, 필드값)
 > - L4: 변이 검증 (호출 여부/횟수/순서) - 모든 메서드에 필수 적용
-  
+
 ```
 **TDD 원칙**: Red → Green → Refactor
 - L1 (Happy Case) 부터 시작하여 기본 기능 보장
@@ -242,52 +245,14 @@ docs/ai-tdd-skills/
 > - **L3 (Exception)**: throw_statements (예외 처리 - throw 문 1:1)
 > - **L4 (Mutation)**: 각 메서드 1개 (변이 검증 - 필수)
 
-#### L4 (Mutation) 테스트 생성 규칙
+#### 상세 생성 규칙 참조
 
-**Formula**: `L4 = public_methods * 1` (반드시 public_methods 기준)
-
-각 public 메서드마다 **반드시** 다음 중 하나 이상을 검증하는 테스트를 생성합니다:
-- 의존성 메서드 호출 여부 (`verify`)
-- 호출 횟수 (`times(N)`)
-- 호출 순서 (`InOrder`)
-- never() 검증 (조건 불만족 시 미호출)
-
-#### L2 vs L3 구분 기준
-
-| 레벨 | 구분 | 검증 대상 |
-|---|---|---|
-| **L2 (Edge Cases)** | 파라미터 자체의 유효성 검증 | `null`, `empty`, `0`, 음수, 경계값 |
-| **L3 (Exception Cases)** | 비즈니스 로직에 의한 예외 | DB 조회 결과에 따른 예외 (중복, 미존재, 권한 없음) |
-
-**예시**:
-- L2: `id == null` → `IllegalArgumentException`
-- L3: `user == null` (DB 조회 결과) → `UserNotFoundException`
-
-#### 반환 타입별 테스트 패턴
-
-메서드의 반환 타입에 따라 다음 어설션 패턴을 적용합니다.
-
-| 반환타입 | Happy Case 어설션 | Edge Case 대상 |
-|---|---|---|
-| Object (DTO, Entity) | `assertThat(result).isNotNull()` + 핵심 필드별 `isEqualTo()` | 파라미터 null/경계값 |
-| `List<T>` | `assertThat(result).hasSize(N)` + 첫 번째 요소 필드 검증 | 빈 리스트 반환 케이스 |
-| `void` | 예외 없이 완료 확인 + `verify()`로 부수효과 검증 | 파라미터 null/경계값 |
-| `int` (영향 행 수) | `assertThat(result).isEqualTo(1)` | 0 반환(대상 없음) 케이스 |
-| `boolean` | `assertThat(result).isTrue()` | false 반환 케이스 |
-
-#### 파라미터 타입별 Edge Case
-
-각 파라미터 타입에 대해 다음 테스트 값을 적용합니다.
-
-| 파라미터 타입 | 테스트할 값 | 테스트 수 |
-|---|---|---|
-| `String` | `null`, `""` | 2 |
-| `Long` / `Integer` | `null`, `0`, `-1` | 2~3 |
-| Object (DTO) | `null`, 필수필드 누락 객체 | 2 |
-| `List<T>` | `null`, `Collections.emptyList()` | 2 |
-| `LocalDate` / `LocalDateTime` | `null` | 1 |
-
-> 상세 매트릭스는 `docs/ai-tdd-skills/generation-guide.md`의 "파라미터 타입별 Edge Case 상세 매트릭스" 참조
+> 아래 항목들의 상세 규칙은 `docs/ai-tdd-skills/generation-guide.md`를 참조하세요.
+> - L4 (Mutation) 테스트 생성 규칙
+> - L2 vs L3 구분 기준
+> - 반환 타입별 어설션 패턴 (3.2절)
+> - 파라미터 타입별 Edge Case 매트릭스 (3.1절)
+> - 메서드 시그니처 → @DisplayName 생성 규칙 (3.3절)
 
 #### 테스트 클래스 구조
 
@@ -311,12 +276,16 @@ class {ClassName}Test {
     * Level 1: Happy Cases (각 메서드 1개)
     * ------------------------------------------------- */
 
-    @Test
-    @DisplayName("한글 시나리오 설명")
-    void shuld_{동작}_when_{조건}() {
-      // Given - Mock 설정
-      // When - 메서드 호출
-      // Then - assertThat 검증
+    @Nested
+    @DisplayName("정상 케이스 테스트")
+    class HappyCases {
+      @Test
+      @DisplayName("한글 시나리오 설명")
+      void should_{동작}_when_{조건}() {
+        // Given - Mock 설정
+        // When - 메서드 호출
+        // Then - assertThat 검증
+      }
     }
 
     /* -------------------------------------------------
@@ -324,7 +293,7 @@ class {ClassName}Test {
      * ------------------------------------------------- */
 
     @Nested
-    @DisplayName("예외 상황 테스트")
+    @DisplayName("경계값 테스트")
     class EdgeCases {...}
 
     /* -------------------------------------------------
@@ -397,7 +366,7 @@ String testCardNumber = "1234567890123456";
 | C1 | `cannot find symbol` | import 문 추가 또는 클래스명/메서드명 오타 수정 |
 | C2 | `incompatible types` | Mock의 `thenReturn()` 반환값 타입 확인, 필요시 캐스팅 추가 |
 | C3 | `package does not exist` | 의존 클래스의 정확한 import 경로를 소스 코드에서 확인 후 수정 |
-| C4 | `method does not override` | 메서드 시그니처를 소스 코드와 제대조하여 수정 |
+| C4 | `method does not override` | 메서드 시그니처를 소스 코드와 재대조하여 수정 |
 | - | 위 4가지로 해결 안되면 | `verification/compile-check.md` 참조 |
 
 #### 검증 2: 테스트 실행

@@ -175,7 +175,7 @@
 | `Long` | `null` | 예외 발생 | 2~3 |
 | | `0L` | 예외 또는 빈 결과 | |
 | | `-1L` | 예외 발생 | |
-| `Interger` | `null` | 예외 발생 | 2~3 |
+| `Integer` | `null` | 예외 발생 | 2~3 |
 | | `0` | 경계값 동작 확인 | |
 | | `-1` | 예외 발생 | |
 | Object (DTO/Request) | `null` | `NullPointerException` 또는 비즈니스 예외 | 2 |
@@ -218,7 +218,7 @@
 
 ## 4. 생성 결과물 표준 구조
 
-생성되는 테스트 클래스틑 다음 구조를 따릅니다.
+생성되는 테스트 클래스는 다음 구조를 따릅니다.
 
 ```java
 class {ClassName}Test {
@@ -235,12 +235,16 @@ class {ClassName}Test {
      * Level 1: Happy Cases (각 메서드 1개)
      * ------------------------------------------------- */
 
-    @Test
-    @DisplayName("한글 시나리오 설명")
-    void shuld_{동작}_when_{조건}() {
-        // Given - Mock 설정
-        // When - 메서드 호출
-        // Then - assertThat 검증
+    @Nested
+    @DisplayName("정상 케이스 테스트")
+    class HappyCases {
+        @Test
+        @DisplayName("한글 시나리오 설명")
+        void should_{동작}_when_{조건}() {
+            // Given - Mock 설정
+            // When - 메서드 호출
+            // Then - assertThat 검증
+        }
     }
 
     /* -------------------------------------------------
@@ -248,7 +252,7 @@ class {ClassName}Test {
      * ------------------------------------------------- */
 
     @Nested
-    @DisplayName("예외 상황 테스트")
+    @DisplayName("경계값 테스트")
     class EdgeCases {...}
 
     /* -------------------------------------------------

@@ -127,7 +127,7 @@ class {클래스명}Test {
 @Test
 @DisplayName("유틸리티 클래스는 인스턴스화할 수 없음")
 void should_throwException_when_instantiated() throws Exception {
-    var constructor = {유틸클래스}.class.getDeclaredConstructor();
+    Constructor<?> constructor = {유틸클래스}.class.getDeclaredConstructor();
     constructor.setAccessible(true);
     assertThatThrownBy(constructor::newInstance)
         .hasCauseInstanceOf(UnsupportedOperationException.class);
@@ -141,7 +141,7 @@ void should_throwException_when_instantiated() throws Exception {
 @Test
 @DisplayName("유틸리티 클래스의 private 생성자 확인")
 void should_havePrivateConstructor() throws Exception {
-    var constructor = {유틸클래스}.class.getDeclaredConstructor();
+    Constructor<?> constructor = {유틸클래스}.class.getDeclaredConstructor();
     assertThat(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers())).isTrue();
     constructor.setAccessible(true);
     assertThat(constructor.newInstance()).isNotNull();
@@ -196,7 +196,7 @@ void should_maskData_when_validInput(String input, String expected) {
     
     @ParameterizedTest
     @NullAndEmptySource
-    void should_throwExpection_when_inputIsNullOrEmpty(String input) { ... }
+    void should_throwException_when_inputIsNullOrEmpty(String input) { ... }
 ```
 
 ### 변환/포맷팅 메서드 테스트 데이터 생성 규칙
@@ -235,7 +235,7 @@ void should_maskData_when_validInput(String input, String expected) {
 
 ## 제약사항
 
-- Spring 어노테이션(`@SpringBoottest`, `@ExtendWith` 등) 사용 금지
+- Spring 어노테이션(`@SpringBootTest`, `@ExtendWith` 등) 사용 금지
 - 테스트 데이터에 실제 개인정보 사용 금지
 - 마스킹/암호화 관련 유틸리티는 입출력 패턴 정밀 검증 필수
 - 상세 규칙은 `constraints/nh-rules.md` 참조

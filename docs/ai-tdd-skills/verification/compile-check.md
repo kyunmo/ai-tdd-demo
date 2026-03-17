@@ -53,7 +53,7 @@ error: cannot find symbol
 **해결**:
 ```java
 // 누락되기 쉬운 import 목록
-import static org.assertJ.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
 
@@ -152,7 +152,7 @@ error: incompatible types: List<Object> cannot be converted to List<User>
 when(userMapper.findAll()).thenReturn(new ArrayList());
 
 // 좋은 예시
-when(userMapper.findAll()).thenREturn(List.of(user1, user2));
+when(userMapper.findAll()).thenReturn(Arrays.asList(user1, user2));
 // 또는
 when(userMapper.findAll()).thenReturn(new ArrayList<User>());
 ```
@@ -210,4 +210,4 @@ testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test'
 | 3 | **타입 불일치** 확인 → 소스 코드 메서드 시그니처 재확인 | 3.2. 참조 |
 | 4 | **어노테이션 오류** 확인 → 계층별 올바른 어노테이션 적용 | 3.3. 참조 |
 | 5 | 위 조치 후 재컴파일 → `./gradlew compileTestJava` | 재검증 |
-| 6 | 3호 ㅣ이상 실패 시 **소스 코드 재분석** 후 테스트 재생성 | 근본 원인 해결 |
+| 6 | 3회 이상 실패 시 **소스 코드 재분석** 후 테스트 재생성 | 근본 원인 해결 |

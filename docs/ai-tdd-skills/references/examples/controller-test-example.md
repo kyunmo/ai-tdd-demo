@@ -13,7 +13,7 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserController userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -48,7 +48,7 @@ public class UserController {
     @GetMapping("/detail/{id}/masked-phone")
     public ResponseEntity<Map<String, String>> getMaskedPhoneNumber(@PathVariable Long id) {
         String masked = userService.getMaskedPhoneNumber(id);
-        return ResponseEntity.ok(Map.of("maskedPhoneNumber", masked));
+        return ResponseEntity.ok(Collections.singletonMap("maskedPhoneNumber", masked));
     }
 }
 ```

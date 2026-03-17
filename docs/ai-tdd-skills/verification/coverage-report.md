@@ -42,11 +42,11 @@
 
 ```
 index.html                      ← 전체 요약 (패키지별 커버리지)
-├─ com.nhcard.al.tt.service/
+├─ com.nhcard.al.demo.service/
 │  ├─ index.html                ← 패키지 요약
 │  ├─ UserService.html          ← 클래스별 상세
 │  └─ UserService.java.html     ← 소스 코드 라인별 커버리지
-├─ com.nhcard.al.tt.controller/
+├─ com.nhcard.al.demo.controller/
 └─ ...
 ```
 
@@ -126,20 +126,20 @@ index.html                      ← 전체 요약 (패키지별 커버리지)
 
 ```java
 // 소스 코드에 다음과 같은 분기가 있고, else가 미커버인 경우:
-// if (user.getStatus() == Status.ACTIVE { ... }
+// if (user.getStatus() == Status.ACTIVE) { ... }
 // else { throw new InactiveUserException(); }
 
 // 추가 테스트:
 @Test
 @DisplayName("비활성 사용자이면 관련 BusinessException 발생")
-void should_throwException_when userIsInactive() {
+void should_throwException_when_userIsInactive() {
     // Given
     User inactiveUser = new User();
     inactiveUser.setStatus(Status.INACTIVE);
-    when(userMapper.findById(String)).thenReturn(inactiveUser);
-    
+    when(userMapper.findById(anyString())).thenReturn(inactiveUser);
+
     // When & Then
-    assertThatThrownBy(() -> userService.getUserById(String))
+    assertThatThrownBy(() -> userService.getUserById("testId"))
             .isInstanceOf(BusinessException.class);
 }
 ```

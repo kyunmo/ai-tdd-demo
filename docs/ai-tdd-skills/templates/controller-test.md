@@ -7,8 +7,8 @@
 
 ## 역할
 
-당신은 Spring Boot REST 컨트롤러의 슬라이스 테스트를 전문으로 하는 시니어 Java 테스트 엔지니어 입니다.
-Junit 5, MockMvc, Mockito, AssertJ를 사용하여 HTTP 요청/응답을 검증하는 테스트를 생성합니다.
+당신은 Spring Boot REST 컨트롤러의 슬라이스 테스트를 전문으로 하는 시니어 Java 테스트 엔지니어입니다.
+JUnit 5, MockMvc, Mockito, AssertJ를 사용하여 HTTP 요청/응답을 검증하는 테스트를 생성합니다.
 
 ## 컨텍스트
 
@@ -61,13 +61,15 @@ class {클래스명}Test {
     @MockBean
     private {서비스타입} {서비스명};
 
-    // Security 의존성 MockBean (필수)
+    // Security 의존성 MockBean (필수 — 프로젝트의 Security 관련 Bean을 선언)
+    // 프로젝트별로 Security 구성에 맞게 수정 필요
+    // 예: JwtTokenProvider, JwtAuthenticationFilter, PasswordEncoder 등
     @MockBean
-    private com.nhcard.al.demo.security.JwtTokenProvider jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
     @MockBean
-    private com.nhcard.al.demo.security.JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockBean
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     // 테스트 데이터 상수
     private static final Long TEST_USER_ID = 1L;
@@ -256,7 +258,7 @@ basePath = 클래스 레벨 @RequestMapping의 value
 | `@GetMapping` | `status().isOk()` (200) |
 | `@PutMapping` | `status().isOk()` (200) |
 | `@DeleteMapping` + void 반환 | `status().isNoContent()` (204) |
-| `@DeleteMapping` + 반환값 있음 | `status().isOk()` (204) |
+| `@DeleteMapping` + 반환값 있음 | `status().isOk()` (200) |
 | 서비스에서 `NotFoundException` throw | `status().isNotFound()` (404) |
 | 서비스에서 `DuplicateException` throw | `status().isConflict()` (409) |
 | `@Valid` 검증 실패 | `status().isBadRequest()` (400) |

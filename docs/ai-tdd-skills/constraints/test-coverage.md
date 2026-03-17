@@ -52,13 +52,13 @@ plugins {
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.7"
 }
 
 jacocoTestReport {
     reports {
-        xml.required = true
-        html.required = true
+        xml.enabled = true
+        html.enabled = true
     }
 }
 
@@ -88,12 +88,12 @@ test {
 
 ```groovy
 plugins {
-    id 'info.solidsoft.pitest' version '1.9.11'
+    id 'info.solidsoft.pitest' version '1.7.4'
 }
 
 pitest {
-    targetClasses = ['com.nhcard.*']
-    targetTests = ['com.nhcard.*']
+    targetClasses = ['com.nhcard.al.demo.*']
+    targetTests = ['com.nhcard.al.demo.*']
     mutationThreshold = 65
     outputFormats = ['HTML']
 }

@@ -9,7 +9,7 @@
 
 ### 1.1. Given-When-Then 패턴
 
-모든 테스트는 **Given-When-then** 패턴으로 구조화합니다.
+모든 테스트는 **Given-When-Then** 패턴으로 구조화합니다.
 
 - **Given**: 테스트 데이터·상수·Mock 설정 (가능하면 `private static final` 상수 사용
 - **When**: 대상 메서드 호출
@@ -131,7 +131,7 @@ assertTrue(result.getEmail().contains("@"));
 assertEquals(3, list.size());
 ```
  
-### 2.2. 예외 어셜션
+### 2.2. 예외 어설션
 
 ```java
 // 좋은 예시 - assertThatThrownBy
@@ -170,7 +170,7 @@ assertThrows(InvalidUserIdException.class, () -> userService.getUserById(null));
 
 ```java
 // 1. static import (테스트 라이브러리)
-import static org.assertJ.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -192,8 +192,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 // 5. 프로젝트 내부
-import com.nhcard.al.tt.service.UserServices;
-import com.nhcard.al.tt.service.mapper.UserMapper;
+import com.nhcard.al.demo.service.UserService;
+import com.nhcard.al.demo.mapper.UserMapper;
 ```
 
 ### 3.3. 메서드 체이닝 포맷
@@ -205,7 +205,7 @@ assertThatThrownBy(() -> userService.registerUser(request))
         .hasMessage("이미 존재하는 아이디입니다.");
 
 mockMvc.perform(get("/api/users/{id}", 1L)
-            .contentType(Mediatype.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("테스트사용자"));

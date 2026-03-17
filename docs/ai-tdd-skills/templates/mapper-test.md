@@ -37,7 +37,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertJ.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
 
@@ -136,7 +136,7 @@ class {맵퍼클래스명}IntegrationTest {
 | CRUD 연산 | Mock 패턴 | 검증 포인트 |
 |---|---|---|
 | SELECT (단건) | `when(mapper.findById(id)).thenReturn(entity)` | 반환값 필드 검증 |
-| SELECT (목록) | `when(mapper.findAll()).thenReturn(List.of(...))` | 리스트 크기, 요소 검증 |
+| SELECT (목록) | `when(mapper.findAll()).thenReturn(Arrays.asList(...))` | 리스트 크기, 요소 검증 |
 | INSERT | `when(mapper.insert(entity)).thenReturn(1)` | 반환값(영향받은 행 수) 검증 |
 | UPDATE | `when(mapper.update(entity)).thenReturn(1)` | 반환값 검증, 호출 인자 검증 |
 | DELETE | `when(mapper.delete(id)).thenReturn(1)` | 반환값 검증 |
@@ -151,13 +151,13 @@ class {맵퍼클래스명}IntegrationTest {
 ```
 맵퍼 메서드명 패턴 매칭 → Mock/검증 패턴 자동 결정:
 
-메서드명 패턴         → thenReturn 값          → 어셜션 패턴
+메서드명 패턴         → thenReturn 값          → 어설션 패턴
 ──────────
 find*, select*, get* (단건)   
     → thenReturn(entity)    → assertThat(result).isNotNull() + 필드 검증
 
 find*, select*, get* (List 반환)
-    → thenReturn(List.of(entity1, entity2))
+    → thenReturn(Arrays.asList(entity1, entity2))
                         → assertThat(result).hasSize(2) + 요소 검증
 
 insert*, save*, create*
@@ -201,7 +201,7 @@ INSERT/UPDATE/DELETE 메서드:
 
 ## 출력 형식
 
-- 테스트 클래스명: `{원본클래스명}Test` (Mock 기반), `{원본클래스명}IntergrationTest` (DB 연동)
+- 테스트 클래스명: `{원본클래스명}Test` (Mock 기반), `{원본클래스명}IntegrationTest` (DB 연동)
 - 메서드명: `should_{동작}_when_{조건}` (영문 snake_case)
 - `@DisplayName`: 한글로 시나리오 설명
 - 레벨별 주석 구분: `// Level 1: Happy Case (각 메서드 1개)`

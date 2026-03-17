@@ -16,19 +16,19 @@
 ### 1.2. 특정 테스트 클래스 실행
 
 ```bash
-./gradlew test --tests "com.nhcard.al.tt.service.UserServiceTest"
+./gradlew test --tests "com.nhcard.al.demo.service.UserServiceTest"
 ```
 
 ### 1.3. 특정 테스트 메서드 실행
 
 ```bash
-./gradlew test --tests "com.nhcard.al.tt.service.UserServiceTest.should_registerUser_when_validRequest"
+./gradlew test --tests "com.nhcard.al.demo.service.UserServiceTest.should_registerUser_when_validRequest"
 ```
 
 ### 1.4. 실패한 테스트만 재실행
 
 ```bash
-./gradlew test --rerun
+./gradlew test --rerun-tasks
 ```
 
 ### 1.5. 상세 로그 출력
@@ -45,7 +45,7 @@
 |---|---|---|
 | 실행 결과 | `BUILD_SUCCESSFUL` | `BUILD_FAILED` |
 | 실패 테스트 수 | 0개 | 1개 이상 |
-| 스킬 테스트 수 | 0개 | 1개 이상 (`@Disabled` 금지)
+| 스킵 테스트 수 | 0개 | 1개 이상 (`@Disabled` 금지)
 | 실행 시간 | 단위테스트: 클래스당 5초 이내 | 
 
 ---
@@ -123,7 +123,7 @@ userService.getUserById(anyString());
 
 ```
 java.lang.NullPointerException
-    at com.nhcard.al.tt.service.UserService.getUserById(UserService.java:285)
+    at com.nhcard.al.demo.service.UserService.getUserById(UserService.java:285)
 ```
 
 **원인**: 소스 메서드 내부에서 호출하는 의존성의 Mock 반환값 미설정
@@ -131,12 +131,12 @@ java.lang.NullPointerException
 **해결**:
 ```java
 // 나쁜 예시 - Mock 반환값 미설정
-// when(userMapper.findById(anyString()).thenReturn(user); // 누락
-User result = userService.getUserBuId(anyString()); // NPE 발생
+// when(userMapper.findById(anyString())).thenReturn(user); // 누락
+User result = userService.getUserById(anyString()); // NPE 발생
 
 // 좋은 예시 - 소스 코드 흐름을 따라 필요한 Mock 모두 설정
-when(userMapper.findById(anyString()).thenReturn(user); // 소스 코드에서 호출하는 메서드
-User result = userService.getUserBuId(anyString());
+when(userMapper.findById(anyString())).thenReturn(user); // 소스 코드에서 호출하는 메서드
+User result = userService.getUserById(anyString());
 ```
 
 ### 4.4. AssertionError - 기대값 불일치

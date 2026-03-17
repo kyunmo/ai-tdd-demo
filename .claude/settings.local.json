@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(gh auth:*)",
+      "Bash(echo gh not found:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI\" && gh auth status 2>&1)",
+      "Bash(head:*)",
+      "Bash(java:*)",
+      "Bash(cd /c/Project/ai-tdd-demo && ./gradlew clean build 2>&1)",
+      "Bash(true:*)",
+      "Bash(echo exit: $?:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew compileJava:*)",
+      "Bash(./gradlew check:*)",
+      "Bash(./gradlew:*)",
+      "Bash(mv:*)",
+      "WebSearch",
+      "Bash(git add CLAUDE.md README.md build.gradle settings.gradle docs/ai-tdd/ docs/plan/report3.md docs/plan/report5.md docs/report.md docs/report2.md docs/report4.md .claude/ docs/ai-tdd-skills/ docs/work-history/)",
+      "Bash(git add CLAUDE.md README.md build.gradle settings.gradle .claude/ docs/ai-tdd-skills/ docs/work-history/)"
+    ]
+  }
+}

@@ -80,6 +80,19 @@ docs/ai-tdd-skills/
 - 테스트/소스 경로
 - 도메인 특화 규칙 요약
 
+### 3.1.1. [필수] 문서 참조 및 규칙 적용 원칙
+
+당신은 테스트 코드를 생성하기 위해 `docs/ai-tdd-skills/` 폴더 내의 모든 스킬 문서를 **매우 엄격하고 정확하게** 참조해야 합니다. 특히 다음 원칙을 최우선으로 준수하십시오.
+
+1.  **모든 문서 참조**: 추측하거나 건너뛰지 말고, 각 단계에서 명시된 문서를 **반드시 읽고 내부적으로 처리**해야 합니다.
+2.  **NH 규칙 최우선**: `constraints/nh-rules.md`에 정의된 보안 및 도메인 규칙은 다른 모든 규칙(네이밍, 스타일, 커버리지)보다 **항상 최우선**으로 적용합니다. 충돌 시 `nh-rules.md`의 규칙을 따릅니다.
+3.  **4단계 레벨 및 테스트 수 산출 공식 엄격 준수**: `generation-guide.md`에 명시된 4단계 테스트 레벨 우선순위 (L1 → L2 → L3 → L4)와 "테스트 수 산출 공식"을 **정확히** 따르십시오. 불필요하거나 중복되는 테스트를 생성해서는 안 되며, 각 레벨에 할당된 테스트 수 및 검증 목표를 준수해야 합니다.
+4.  **템플릿 및 예제 정밀 활용**: `templates/`의 템플릿 구조와 `references/examples/`의 코드 스타일 및 패턴을 **정밀하게** 복제하여 사용해야 합니다. 템플릿 내 `{플레이스홀더}`는 소스 코드 분석 결과에 따라 **정확히** 대체되어야 합니다.
+5.  **구조화된 분석 결과 활용**: `3.2. [2단계] 소스 파일 탐색 및 분석`에서 생성되는 "소스 분석 결과 포맷"을 내부적으로 유지하고, 이를 기반으로 각 단계의 의사결정을 수행하여 일관성을 확보합니다.
+
+이러한 원칙을 철저히 준수함으로써, 생성되는 테스트 코드의 품질과 일관성을 보장할 수 있습니다.
+
+
 ### 3.2. [2단계] 소스 파일 탐색 및 분석
 
 #### 소스 파일 탐색 알고리즘
@@ -203,23 +216,29 @@ docs/ai-tdd-skills/
 입력값:
   public_methods = 소스의 public 메서드 수
   throw_statements = 소스의 throw 문 수 (중복 예외 제거)
-  domain_checks = 도메인 검증 항목 수 (암호화, 마스킹, 감사로그 등)
 
-레벨별 산출 (고정 기준):
-  Level 1 (Happy Case) = public_methods * 1         // 정상 시나리오 (필수)
-  Level 3 (Exception) = throw_statements            // throw 문 1:1 매핑
-  Level 4 (Mutation) = public_methods * 1           // 각 메서드 호출 검증 (필수)
-  Level 2 (Edge Case) = 나머지                       // L1+L3+L4 미커버 경계값
+기본 레벨 테스트 수 (고정 산출):
+  L1 (Happy Case) = public_methods * 1         // 각 public 메서드에 1개씩, 정상 시나리오 (필수)
+  L3 (Exception) = throw_statements            // 소스 코드의 모든 throw 문에 1:1 매핑
+  L4 (Mutation) = public_methods * 1           // 각 public 메서드에 1개씩, 호출 검증 (필수)
 
-  최소 총 테스트 수 = max(15, L1 + L2 + L3 + L4)
-  L2 최소 보장 = max(3, public_methods)              // 최소 3개 이상
+기본 총 테스트 수 = L1 + L3 + L4
+
+Level 2 (Edge Case) 산출:
+  // L2는 파라미터 유효성 검증에 집중하며, 기본적으로 public 메서드 수만큼 생성합니다.
+  L2_base = max(3, public_methods)
+
+최종 테스트 수 결정:
+  // 만약 기본 테스트만으로 15개가 넘지 않으면, 부족한 수를 L2 테스트로 추가하여 보충합니다.
+  needed_for_minimum = max(0, 15 - (기본 총 테스트 수 + L2_base))
+  L2_final = L2_base + needed_for_minimum
+
+  총 테스트 수 = L1 + L2_final + L3 + L4
 
 > **설계 원칙**:
-> - L1, L3, L4는 소스 코드에서 기계적으로 산출 (고정)
-> - L2는 파라미터 유효성 검증으로, 커버리지 목표 달성을 위해 유동 조절
-> - L1: 정상 동작 검증 (반환값, 필드값)
-> - L4: 변이 검증 (호출 여부/횟수/순서) - 모든 메서드에 필수 적용
-
+> - L1, L3, L4는 소스 코드에서 직접 추출하여 **고정적으로** 생성합니다.
+> - L2(Edge Case)는 기본 개수를 보장하되, **전체 테스트 수가 최소 15개가 되도록 보충하는 역할**을 명확히 수행합니다. 이를 통해 AI가 임의로 테스트를 생성하는 것을 방지하고 일관성을 확보합니다.
+> - 비율보다 **비즈니스 로직 검증 충분성**이 우선입니다.
 ```
 **TDD 원칙**: Red → Green → Refactor
 - L1 (Happy Case) 부터 시작하여 기본 기능 보장
@@ -341,25 +360,27 @@ String testCardNumber = "1234567890123456";
 
 ### 3.7. [7단계] 검증 및 수정
 
-테스트 파일 생성 후 다음 3단계 검증을 실행합니다.
+테스트 파일 생성 후 다음 단일 검증 스크립트를 실행합니다.
 
 > docs/ai-tdd-skills/.claude.md의 gradle 경로 참조
 > 빌드 도구 경로: /c/tools/gradle-6.8.3/bin/gradle
 
-#### 검증 1: 컴파일
+#### 단일 검증 스크립트 실행 및 재시도 정책
 
-1. 먼저 `./gradlew compileTestJava` 시도
-2. 실패 시 `docs/ai-tdd-skills/.claude.md`에서 빌드 도구 경로 참조하여 재시도
+1.  **스크립트 실행**: `docs/ai-tdd-skills/verification/run-compile-test.sh` 스크립트를 사용하여 생성된 테스트 파일을 검증합니다. 대상 클래스의 전체 경로 이름(FQDN)을 인자로 전달합니다.
 
-```bash
-# 실패 시 gradle 경로 참조 (docs/ai-tdd-skills/.claude.md line 18 참고)
-# 예: /c/tools/gradle-6.8.3/bin/gradle compileTestJava
-```
+    ```bash
+    # 스크립트 실행 예시
+    # ./docs/ai-tdd-skills/verification/run-compile-test.sh {패키지}.{ClassName}
+    ```
 
-- **성공**: 다음 검증으로 진행
-- **실패**: 아래 자동 수정 의사결정 트리를 먼저 적용
+2.  **결과 확인 및 조치**:
+    -   **성공 시**: 검증이 성공적으로 완료됩니다. 최종 결과를 보고합니다.
+    -   **실패 시**: 스크립트가 오류와 함께 종료됩니다. 아래 **자동 수정 및 재시도 정책**에 따라 최대 3회까지 수정을 시도합니다.
 
-**컴파일 오류 자동 수정 의사결정 트리**:
+**자동 수정 및 재시도 정책 (최대 3회 반복)**:
+
+스크립트 실행 실패 시, 다음 의사결정 트리에 따라 오류의 원인을 파악하고 코드를 수정한 후, 검증 스크립트를 다시 실행합니다.
 
 | # | 오류 메시지 패턴 | 자동 수정 액션 |
 |---|---|---|
@@ -367,47 +388,13 @@ String testCardNumber = "1234567890123456";
 | C2 | `incompatible types` | Mock의 `thenReturn()` 반환값 타입 확인, 필요시 캐스팅 추가 |
 | C3 | `package does not exist` | 의존 클래스의 정확한 import 경로를 소스 코드에서 확인 후 수정 |
 | C4 | `method does not override` | 메서드 시그니처를 소스 코드와 재대조하여 수정 |
-| - | 위 4가지로 해결 안되면 | `verification/compile-check.md` 참조 |
-
-#### 검증 2: 테스트 실행
-
-1. 먼저 `./gradlew test --tests "{패키지}.{ClassName}Test"` 시도
-2. 실패 시 `docs/ai-tdd-skills/.claude.md`에서 빌드 도구 경로 참조하여 재시도
-
-```bash
-# 실패 시 gradle 경로 참조
-# 예: /c/tools/gradle-6.8.3/bin/gradle test --tests "{패키지}.{ClassName}Test"
-```
-
-- **성공**: 다음 검증으로 진행
-- **실패**: 아래 자동 수정 의사결정 트리를 먼저 적용
-
-**테스트 실패 자동 수정 의사결정 트리**:
-
-| # | 실패 유형 | 자동 수정 액션 |
-|---|---|---|
 | T1 | `NullPointerException` | `when()` 설정 누락 확인 → Mock 반환값 추가 |
 | T2 | `AssertionError` (기대값 불일치) | 소스 코드 재확인 → 기대값 또는 Mock 반환값 수정 |
 | T3 | `UnnecessaryStubbingException` | 사용하지 않는 `when()` 설정 제거 |
 | T4 | `InvalidUseOfMatchersException` | Matcher 혼용 확인 → 모든 인자를 Matcher로 통일 또는 모두 리터럴로 변경 |
-| - | 위 4가지로 해결 안 되면 | `verification/test-execution.md` 참조 |
+| - | 위 8가지로 해결 안되면 | `verification/compile-check.md` 또는 `verification/test-execution.md` 참조하여 심층 분석 후 수정 |
 
-#### 검증 3: 커버리지 확인 (선택)
-
-1. 먼저 `./gradlew test jacocoTestReport jacocoTestCoverageVerification` 시도
-2. 실패 시 `docs/ai-tdd-skills/.claude.md`에서 빌드 도구 경로 참조하여 재시도
-
-```bash
-# 실패 시 gradle 경로 참조
-# 예: /c/tools/gradle-6.8.3/bin/gradle test jacocoTestReport jacocoTestCoverageVerification
-```
-
-- **합격 기준**: 라인 커버리지 80% 이상, 분기 커버리지 70% 이상
-- `jacocoTestCoverageVerification`이 자동으로 임계값 초과 여부를 판정합니다.
-- **미달 시**: `docs/ai-tdd-skills/verification/coverage-report.md` 참조하여 미커버 영역에 추가 테스트 생성
-
-#### 재시도 정책
-
+3.  **최종 실패**: 3회 재시도 후에도 실패하면, 수정을 중단하고 사용자에게 "자동 수정에 실패했습니다. 로그를 확인해주세요." 라고 보고합니다.
 | 상황 | 조치 |
 |---|---|
 | 컴파일 오류 | 오류 메시지 분석 → 코드 수정 → 재컴파일 (최대 3회) |

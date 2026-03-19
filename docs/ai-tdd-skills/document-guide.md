@@ -52,7 +52,7 @@ graph TD
     T1 & T2 & T3 & T4 --> R["constraints/<br>(4. 규칙적용)"]
     R --> E["references/examples/<br>(5. 예제 참조)"]
     E --> G["6. 테스트 코드 생성"]
-    G --> V["verification/<br>(7. 검증 절차)"]
+    G --> V["verification/<br>(7. 검증 및 자동화)"]
 
     style A fill:#e1f5fe
     style S fill:#b3e5fc
@@ -125,17 +125,18 @@ graph TD
 
 **커스터마이징**: 프로젝트별 추가 예시 파일 생성 가능
 
-### 2.6. `verification/` - 검증 절차
+### 2.6. `verification/` - 검증 및 자동화
 
-테스트 생성 후 품질을 검증하는 3단계 절차입니다.
+테스트 생성 후 품질을 검증하고, 자동화 사이클을 실행하는 데 사용되는 스크립트와 문제 해결 가이드를 포함합니다.
 
-| 순서 | 파일 | 명령어 | 합격 기준 |
-|---|---|---|---|
-| 1 | `compile-check.md` | `./gradlew compileTestJava` | 컴파일 오류 0건 |
-| 2 | `test-execution.md` | `./gradlew test` | 모든 테스트 PASS |
-| 3 | `coverage-report.md` | `./gradlew test jacocoTestReport` | 라인 80%, 분기 70% 이상 |
+| 파일 | 역할 | 주 사용 시점 |
+|---|---|---|
+| `run-compile-test.sh` | **자동화 스크립트** | 테스트 생성 직후 AI가 자동 호출 |
+| `compile-check.md` | **문제 해결 가이드** | 스크립트가 컴파일 오류로 실패 시 AI가 참조 |
+| `test-execution.md` | **문제 해결 가이드** | 스크립트가 테스트 실패로 실패 시 AI가 참조 |
+| `coverage-report.md` | **문제 해결 가이드** | (JaCoCo 도입 후) 커버리지 미달 시 AI가 참조 |
 
-**커스터마이징**: 불필요 (100% 공통)
+**커스터마이징**: 자동화 스크립트는 환경에 따라 수정될 수 있습니다.
 
 ---
 

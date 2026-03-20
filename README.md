@@ -83,12 +83,15 @@ http://localhost:8080/swagger-ui/index.html 참고
 
 ### AI 테스트 검증 대상 클래스
 
-| 레이어 | 테스트 템플릿 | 핵심 검증 포인트 |
+| 레이어 | 테스트 템플릿 | 핵심 검증 포인트 (현재) |
 |---|---|---|
 | Controller | `controller-test.md` | MockMvc, HTTP 상태코드, JSON 응답 |
 | Service | `service-test.md` | Mock 의존성, 예외 분기, 비즈니스 로직 |
 | Mapper | `mapper-test.md` | CRUD Mock 패턴, SQL 매핑 |
 | Utility | `util-test.md` | ParameterizedTest, 경계값 등 |
+
+> **[참고]** 현재 JaCoCo 라이브러리 반입 대기 중으로, 커버리지 검증은 일시적으로 보류됩니다.
+> 테스트 생성 후에는 `verification/run-compile-test.sh` 스크립트를 통해 **컴파일 및 테스트 실행**만 자동 검증됩니다.
 
 ---
 
@@ -164,8 +167,10 @@ claude
 `docs/ai-tdd-skills/` 디렉토리에 AI 에이전트가 테스트를 생성하기 위한 전체 문서가 포함되어 있습니다.
 
 ```
-에이전트 실행 흐름:
-    {클래스명} test-generator 에이전트 활용 테스트 파일 생성 입력 → 소스 분석 → 레이어 판별
-    → 템플릿 선택 → 테스트 생성 → 컴파일 → 실행 → 커버리지 확인
+에이전트 실행 흐름 (현재):
+    {클래스명} test-generator 에이전트 활용 테스트 파일 생성 입력
+    → 소스 분석 → 레이어 판별 → 템플릿 선택 → 테스트 생성
+    → 자동 검증 스크립트 실행 (컴파일 → 실행)
 ```
-
+> **[참고]** 현재 JaCoCo 라이브러리 반입 대기 중으로, 커버리지 확인은 일시적으로 보류됩니다.
+> 모든 검증은 `verification/run-compile-test.sh` 스크립트를 통해 자동화됩니다.

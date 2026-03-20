@@ -6,102 +6,91 @@
 
 ---
 
-## 1. Why — 왜 처음부터 TDD인가
+## 1. TDD 도입의 필요성
 
-### 1.1. "나중에 테스트 작성"이 실패하는 이유
+### 1.1. 테스트 후 작성 방식의 문제점
 
-많은 프로젝트가 이런 계획을 세웁니다:
+많은 프로젝트에서 "일단 기능 먼저 만들고, 나중에 테스트를 추가하자"는 계획을 세웁니다. 하지만 대부분 다음과 같은 흐름으로 이어집니다.
 
-> "일단 기능 먼저 만들고, 나중에 테스트 추가하자"
-
-그리고 대부분 이렇게 됩니다:
-
+```mermaid
+graph TD
+    A[기능 구현 우선] --> B{일정 압박};
+    B --> C[테스트 미작성];
+    C --> D{코드 복잡도 증가};
+    D --> E[테스트 작성 비용 상승];
+    E --> F[반복적인 테스트 미작성];
+    F --> G[테스트 없는 레거시 탄생];
 ```
-일정 압박 → "이번 스프린트는 기능 우선" → 테스트 미작성
-    → 코드 복잡도 증가 → 테스트 작성 비용 상승 → "다음에..."
-    → 반복 → 테스트 없는 레거시 탄생
-```
 
-| "나중에" 방식의 문제 | TDD 방식의 해결 |
+이러한 방식은 다음과 같은 문제점을 유발하며, TDD는 이에 대한 효과적인 해결책을 제시합니다.
+
+| "나중에" 방식의 문제점 | TDD 방식의 해결책 |
 |---|---|
-| 구현 후 테스트를 작성하면, 테스트하기 어려운 코드가 이미 완성됨 | 테스트를 먼저 쓰면, 자연스럽게 테스트하기 쉬운 구조가 됨 |
-| 테스트 작성이 "추가 작업"으로 느껴져 우선순위에서 밀림 | 테스트가 개발 프로세스의 일부이므로 별도 시간 불필요 |
-| 테스트 없이 배포 → 버그 발생 → 핫픽스 비용 | 테스트가 회귀 방지 → 안정적 배포 |
+| 구현 후 테스트를 작성하면, 테스트하기 어려운 코드가 이미 완성되는 경향이 있음 | 테스트를 먼저 작성함으로써, 자연스럽게 테스트하기 쉬운 구조의 코드 설계가 유도됨 |
+| 테스트 작성이 "추가적인 작업"으로 인식되어 우선순위에서 밀리기 쉬움 | 테스트가 개발 프로세스의 필수적인 부분으로 통합되어 별도의 시간 할애가 불필요 |
+| 테스트 없이 배포되어 버그 발생 시, 핫픽스 및 재작업 비용이 증가 | 테스트가 회귀를 방지하여 안정적인 배포를 가능하게 함 |
 
-### 1.2. TDD가 설계를 개선하는 원리
+### 1.2. TDD를 통한 설계 개선 원리
 
-TDD의 핵심 가치는 "테스트가 설계를 이끈다"는 것입니다.
+TDD의 핵심 가치는 "테스트가 설계를 이끈다"는 것입니다. "테스트를 먼저 작성한다"는 것은 개발될 코드가 **"어떻게 사용될 것인지 먼저 고민한다"**는 의미와 같습니다.
 
-```
-"테스트를 먼저 작성한다"는 것은
-"이 코드가 어떻게 사용될지 먼저 생각한다"는 뜻입니다.
-```
+테스트를 먼저 작성함으로써 자연스럽게 다음과 같은 설계상의 이점을 얻을 수 있습니다.
+- **인터페이스 중심 설계**: 구현이 아닌 코드 사용자의 관점에서 인터페이스를 먼저 설계하게 됩니다.
+- **주입 가능한 의존성**: Mock 객체로 의존성을 대체해야 하므로, 의존성 주입이 용이한 구조를 갖추게 됩니다.
+- **단일 책임 원칙 준수**: 하나의 테스트는 하나의 검증에 집중하므로, 자연스럽게 클래스나 메서드가 단일 책임을 갖도록 유도됩니다.
+- **불필요한 코드 제거**: 테스트가 요구하는 최소한의 기능만을 구현하게 되어, 과도한 설계나 불필요한 코드 작성을 방지합니다.
 
-테스트를 먼저 쓰면 자연스럽게:
-- **인터페이스부터 설계**하게 됩니다 (구현이 아닌 사용자 관점)
-- **의존성이 주입 가능**한 구조가 됩니다 (Mock으로 대체해야 하니까)
-- **단일 책임**을 지키게 됩니다 (테스트 하나 = 검증 하나)
-- **불필요한 코드를 안 쓰게** 됩니다 (테스트가 요구하는 것만 구현)
+### 1.3. AI 에이전트와 함께하는 TDD의 시너지
 
-### 1.3. AI 에이전트 + TDD = 생산성과 품질 동시 확보
+TDD 도입의 가장 큰 진입 장벽 중 하나는 **"테스트 코드를 매번 직접 작성하는 데 필요한 시간과 노력"**입니다. AI 에이전트는 이 병목 현상을 효과적으로 해결하여 TDD의 이점을 극대화합니다.
 
-TDD의 가장 큰 진입 장벽은 **"테스트 코드를 매번 직접 쓰는 시간"**입니다.
-AI 에이전트가 이 병목을 해결합니다.
-
-| TDD 단계 | 기존 방식 | AI 에이전트 활용 |
+| TDD 단계 | 기존 개발 방식 | AI 에이전트 활용 시 |
 |---|---|---|
-| **Red** (테스트 작성) | 개발자가 수동 작성 (시간 소요) | 에이전트가 요구사항 → 테스트 자동 생성 |
-| **Green** (구현) | 개발자가 구현 | 개발자가 구현 (변경 없음) |
-| **Refactor** (개선) | 수동 리팩토링 | 리뷰 에이전트가 개선점 제안 |
+| **Red** (테스트 작성) | 개발자가 수동으로 테스트 코드 작성 (시간 소요) | AI 에이전트가 요구사항을 분석하여 테스트 코드 자동 생성 |
+| **Green** (구현) | 개발자가 테스트를 통과하는 코드 구현 | 개발자가 구현 (이 단계는 사람의 설계 주도권 유지) |
+| **Refactor** (개선) | 수동으로 코드 리팩토링 및 검증 | `tdd-review` 에이전트가 코드 품질 검증 및 개선점 제안 |
 
-결과적으로: **TDD의 이점은 유지하면서, 테스트 작성 비용을 대폭 줄임**
+결과적으로 AI 에이전트의 도움으로 **TDD의 핵심 이점(설계 개선, 품질 향상)은 유지하면서도, 테스트 코드 작성 및 검증에 드는 시간과 비용을 획기적으로 절감**할 수 있습니다.
 
 ---
 
-## 2. What — 무엇을 할 것인가
+## 2. TDD 핵심 사이클 및 AI 역할
 
-### 2.1. Red-Green-Refactor 사이클 (실패-통과-개선)
+### 2.1. Red-Green-Refactor 핵심 사이클
 
-TDD는 짧은 사이클을 빠르게 반복합니다.
+TDD는 짧은 주기의 다음 세 단계를 빠르게 반복하는 개발 방법론입니다.
 
-```
-  ┌─────────────────────────────────────────────────────┐
-  │                                                     │
-  │   ① Red           ② Green          ③ Refactor      │
-  │   테스트 작성      최소 구현         코드 개선        │
-  │   (실패 확인)      (통과 확인)       (통과 유지)      │
-  │                                                     │
-  │   ──────→ ──────→ ──────→ ① Red (다음 기능)...     │
-  │                                                     │
-  └─────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    Red(Red: 실패하는 테스트 작성) --> Green(Green: 테스트 통과하는 최소 코드 구현);
+    Green --> Refactor(Refactor: 코드 개선 및 리팩토링);
+    Refactor --> Red;
 ```
 
-**중요한 규칙**:
-- Red 단계에서 테스트가 실패하는 것을 **반드시 확인** (이미 통과하면 의미 없는 테스트)
-- Green 단계에서 **최소한의** 코드만 작성 (과잉 구현 금지)
-- Refactor 단계에서 테스트가 **계속 통과**하는지 확인
+**사이클의 중요 규칙**:\
+- **Red 단계**: 작성한 테스트가 처음에는 반드시 실패함을 **확인**해야 합니다. (이미 통과하는 테스트는 실질적인 검증 효과가 없기 때문입니다.)\
+- **Green 단계**: 테스트를 통과시키는 **최소한의 코드**만을 작성해야 합니다. (과도한 구현은 피합니다.)\
+- **Refactor 단계**: 코드 개선(리팩토링) 후에도 테스트가 **계속 통과**하는지 반드시 확인해야 합니다.
 
-### 2.2. AI 에이전트가 각 단계에서 하는 역할
+### 2.2. TDD 각 단계에서의 AI 에이전트 역할
 
 | 단계 | AI 에이전트 역할 |
 |---|---|
-| **Red** | 요구사항을 분석하여 테스트 코드 자동 생성 |
-| **Green** | 구현 코드 작성은 개발자가 수행 (설계 주도권은 사람에게) |
-| **Refactor** | tdd-review 에이전트가 품질 검증 + 개선점 제안 |
+| **Red** | 요구사항을 분석하여 테스트 코드를 자동으로 생성합니다. (개발자는 테스트 시나리오 구상에 집중) |\
+| **Green** | 기능 구현 코드 작성은 개발자가 직접 수행합니다. (코드의 설계 및 구현 주도권은 사람에게 유지) |\
+| **Refactor** | `tdd-review` 에이전트가 생성된 코드의 품질을 검증하고, 개선이 필요한 부분을 제안합니다. (개발자는 리팩토링 방향 설정에 집중) |
 
-### 2.3. 최종 목표
+### 2.3. TDD 도입의 궁극적인 목표
 
-```
-"테스트 없는 코드는 미완성 코드" — 이것이 팀의 기본 인식이 되는 것
-```
+신규 프로젝트에 TDD를 도입하는 궁극적인 목표는 **"테스트 없는 코드는 미완성 코드"**라는 인식을 팀의 기본 개발 문화로 정착시키는 것입니다.
 
 ---
 
-## 3. How — 환경 세팅
+## 3. TDD 환경 설정 가이드
 
-### 3.1. 신규 프로젝트 생성
+### 3.1. 신규 프로젝트 생성 및 기본 구성
 
-Spring Boot 프로젝트를 생성합니다 (Spring Initializr 또는 사내 아키타입 사용).
+Spring Boot 프로젝트를 생성합니다 (Spring Initializr 또는 사내 아키타입 사용). 프로젝트 생성 시 다음 기술 스택을 참고할 수 있습니다.
 
 ```
 기술 스택 (예시):
@@ -112,7 +101,7 @@ Spring Boot 프로젝트를 생성합니다 (Spring Initializr 또는 사내 아
 - H2 (개발/테스트용)
 ```
 
-프로젝트 기본 구조:
+프로젝트 기본 구조는 다음과 같습니다.
 
 ```
 board-project/
@@ -133,45 +122,78 @@ board-project/
 └── build.gradle
 ```
 
-### 3.2. 에이전트 및 스킬 문서 배치
+### 3.2. AI 에이전트 파일 배치
 
-레거시 가이드의 3장과 동일한 구조로 배치합니다.
+Claude Code의 에이전트(Agent)는 `.claude/agents/` 디렉토리에 마크다운 파일로 정의합니다. 에이전트 파일은 AI 에이전트의 **역할과 행동 방식**을 정의하는 지시서입니다.
+
+프로젝트 루트에 다음 파일들을 배치합니다.
 
 ```
-board-project/
+{프로젝트 루트}/
 ├── .claude/
 │   └── agents/
 │       ├── test-generator.md     ← 테스트 생성 에이전트
 │       └── tdd-review.md         ← 테스트 리뷰 에이전트
-│
-└── docs/
-    └── ai-tdd-skills/            ← 스킬 문서 전체 복사
-        ├── .claude.md            ← [수정필요] 프로젝트 설정
-        ├── generation-guide.md
-        ├── templates/
-        ├── constraints/
-        ├── references/examples/
-        └── verification/
 ```
 
-> 에이전트/스킬 문서의 상세한 역할과 구조는 [레거시 TDD 가이드](./legacy-tdd-guide.md)의 **3.2절 에이전트 역할**, **3.3절 스킬 문서** 참조
-> 에이전트의 실제 사용 방법(호출, 입력, 전환)은 [레거시 TDD 가이드](./legacy-tdd-guide.md)의 **3.7절 에이전트 사용법** 참조
+### 3.3. 스킬 문서 배치
 
-#### .claude.md 수정
+스킬 문서는 AI 에이전트가 테스트 코드를 생성할 때 참조하는 **지식 베이스**입니다. 에이전트는 이 문서들을 통해 따를 규칙과 적용할 패턴을 학습합니다.
+
+프로젝트에 다음 구조로 복사합니다.
+
+```
+{프로젝트 루트}/
+└── docs/
+    └── ai-tdd-skills/
+        ├── .claude.md                ← [커스터마이징 필요] 프로젝트 설정
+        ├── generation-guide.md       ← 생성 가이드 (4-Level, 판별 기준)
+        ├── document-guide.md         ← 문서 체계 설명
+        │
+        ├── templates/                ← 계층별 테스트 템플릿
+        │   ├── service-test.md           Service 단위테스트
+        │   ├── controller-test.md        Controller 슬라이스 테스트
+        │   ├── mapper-test.md            Mapper Mock/DB 테스트
+        │   └── util-test.md              Utility 순수 테스트
+        │
+        ├── constraints/              ← 규칙 및 제약사항
+        │   ├── nh-rules.md               NH 도메인 특화 규칙 (최우선)
+        │   ├── naming-conventions.md     네이밍 규칙
+        │   ├── code-style.md             코드 스타일
+        │   └── test-coverage.md          커버리지 기준
+        │
+        ├── references/examples/      ← 참고 예제
+        │   ├── service-test-example.md
+        │   ├── controller-test-example.md
+        │   ├── mapper-test-example.md
+        │   └── util-test-example.md
+        │
+        └── verification/             ← 검증 절차
+            ├── compile-check.md          컴파일 검증
+            ├── test-execution.md         테스트 실행 검증
+            └── coverage-report.md        커버리지 검증
+```
+
+### 3.4. 프로젝트 설정 파일 작성 (.claude.md)
+
+`docs/ai-tdd-skills/.claude.md` 파일에서 `[수정필요]` 항목을 프로젝트에 맞게 변경합니다.
 
 ```markdown
-| 항목 | 값 |
-|---|---|
-| 프로젝트명 | Board Project |
-| 기본 패키지 | `com.nhcard.al.board` |
-| 프레임워크 버전 | 2.7.17 |
-| JDK 버전 | 1.8 |
+## 프로젝트 정보
+
+| 항목 | 값 | 비고 |
+|---|---|---|
+| 프로젝트명 | Board Project | `[수정필요]` |
+| 기본 패키지 | `com.nhcard.al.board` | `[수정필요]` |
+| 프레임워크 버전 | 2.7.17 | `[수정필요]` |
+| JDK 버전 | 1.8 | `[수정필요]` |
 ```
 
-### 3.3. 빌드 설정
+### 3.5. 빌드 설정
 
 `build.gradle`에 테스트 관련 의존성과 플러그인을 추가합니다.
 
+> **참고**: JaCoCo 라이브러리는 현재 반입 진행 중입니다. 반입 완료 전까지는 관련 설정과 검증 단계를 임시로 건너뛰십시오.
 ```groovy
 plugins {
     id 'java'
@@ -216,39 +238,17 @@ jacocoTestCoverageVerification {
 }
 ```
 
-#### 동작 확인
+### 3.6. 에이전트 사용법
+
+#### 에이전트 호출 기본
+
+`.claude/agents/` 디렉토리에 에이전트 파일이 배치되어 있으면, Claude Code가 자동으로 인식합니다. 별도의 선택 과정 없이 **에이전트 이름과 함께 프롬프트를 입력하면 바로 실행**됩니다.
+
+신규 프로젝트 TDD에서는 아직 소스 코드가 없는 상태이므로, **요구사항과 함께** AI 에이전트를 호출하는 것이 핵심입니다.
+
+> **중요**: 신규 프로젝트 TDD 성공의 핵심은 AI에게 **'잘 정의된 요구사항'**을 제공하는 것입니다. 요구사항이 명확하고 상세할수록, AI는 여러분의 설계 의도를 더 정확하게 반영한 테스트 코드를 생성해 줍니다.
 
 ```bash
-# Claude Code 실행
-claude
-
-# 에이전트 목록 확인 (목록 확인용, 에이전트 호출과는 무관)
-/agents
-```
-
-```
-❯ Create new agent
-
-  Project agents (~\board-project\.claude\agents)
-  test-generator · inherit
-  tdd-review · inherit
-```
-
-> **참고**: `/agents` 명령어는 에이전트 **목록 확인 및 생성/수정**용입니다. 에이전트 호출 방법은 다음 절(3.4)을 참조하세요.
-
-### 3.4. 에이전트 사용법 (빠른 요약)
-
-> 상세한 사용법은 [레거시 TDD 가이드](./legacy-tdd-guide.md)의 **3.7절** 참조
-
-```
-> test-generator, BoardService.java
-```
-
-에이전트가 자동으로 소스 탐색 → 분석 → 테스트 생성 → 컴파일 → 실행 → 커버리지 확인을 수행합니다.
-
-신규 프로젝트 TDD에서는 아직 소스 코드가 없으므로, **요구사항과 함께** 입력합니다:
-
-```
 > test-generator, BoardService 테스트 코드 생성
 
 요구사항:
@@ -260,12 +260,19 @@ claude
 - 존재하지 않는 게시글 접근 시 예외 발생
 ```
 
-에이전트가 요구사항을 기반으로 테스트 코드를 생성합니다.
-이 테스트는 아직 구현이 없으므로 컴파일 실패(Red 상태)가 정상입니다.
+#### 심화: 생성된 코드 수정 및 보강하기 (교정 프롬프트)
+
+최초 생성 후, 테스트를 수정하거나 보강하고 싶을 때는 구체적인 '교정 프롬프트'를 사용할 수 있습니다.
+
+| 목적 | 프롬프트 예시 |
+|---|---|
+| **특정 로직 추가** | `test-generator, BoardServiceTest의 deleteBoard 테스트에 boardMapper.delete가 호출되었는지 verify하는 로직을 추가해줘` |
+| **시나리오 보강** | `test-generator, BoardServiceTest에 존재하지 않는 게시글을 수정하려 할 때 예외가 발생하는 테스트를 보강해줘` |
+| **특정 테스트 재생성** | `test-generator, BoardServiceTest의 should_createBoard_when_validRequest 테스트만 다시 생성해줘. 이번에는 author 필드가 비어있을 때의 검증을 포함해줘.` |
 
 ---
 
-## 4. How — 게시판 CRUD TDD 실습
+## 4. 게시판 CRUD TDD 실습
 
 ### 4.1. 요구사항 정의
 
@@ -281,811 +288,169 @@ claude
   6. 예외처리: 존재하지 않는 게시글 조회/수정/삭제 시 예외 발생
 ```
 
-### 4.2. Service 계층 TDD
+### 4.2. Service 계층 TDD (Red-Green-Refactor)
 
-Service 계층부터 시작합니다. 이것이 TDD의 핵심 영역입니다.
+테스트 주도 개발은 Service 계층부터 시작하는 것이 핵심적인 접근 방식입니다.
 
----
+#### **Step 1: Red — 실패하는 테스트 작성**
 
-#### 사이클 1: 게시글 등록
+에이전트에게 요구사항을 전달하여 `BoardService`에 대한 테스트 코드를 생성합니다.
 
-##### Red — 테스트 먼저 작성
-
-에이전트에게 요구사항을 주고 테스트를 생성합니다.
-
-```
+```bash
 > test-generator, BoardService 테스트 코드 생성
 
 요구사항:
-- 게시글 등록: 제목, 내용, 작성자를 입력받아 게시글을 생성
+- 게시글 등록: 제목, 내용, 작성자를 입력받아 게시글 생성
 - 게시글 조회: ID로 조회 (조회수 자동 증가)
 - 게시글 목록: 전체 목록 조회
 - 게시글 수정: 제목, 내용 수정
 - 게시글 삭제: ID로 삭제
-- 존재하지 않는 게시글 조회/수정/삭제 시 예외 발생
+- 존재하지 않는 게시글 접근 시 예외 발생
 ```
 
-에이전트가 다음 파일을 생성합니다 (아래는 예상 출력이며, 실제 생성 코드는 모델에 따라 다를 수 있습니다):
+에이전트가 `src/test/java/.../service/BoardServiceTest.java` 파일을 생성할 것입니다.
 
-```
-src/test/java/com/nhcard/al/board/service/BoardServiceTest.java
-```
-
-```java
-package com.nhcard.al.board.service;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.nhcard.al.board.domain.Board;
-import com.nhcard.al.board.dto.CreateBoardRequest;
-import com.nhcard.al.board.dto.UpdateBoardRequest;
-import com.nhcard.al.board.exception.BoardNotFoundException;
-import com.nhcard.al.board.mapper.BoardMapper;
-
-import java.util.Arrays;
-import java.util.List;
-
-@ExtendWith(MockitoExtension.class)
-class BoardServiceTest {
-
-    @Mock
-    private BoardMapper boardMapper;
-
-    @InjectMocks
-    private BoardService boardService;
-
-    private static final Long TEST_BOARD_ID = 1L;
-    private static final String TEST_TITLE = "테스트 제목";
-    private static final String TEST_CONTENT = "테스트 내용";
-    private static final String TEST_AUTHOR = "테스트작성자";
-
-    // ── Level 1: Happy Case ──
-    @Nested
-    @DisplayName("Level 1: Happy Case")
-    class HappyCases {
-
-        @Test
-        @DisplayName("유효한 요청으로 게시글 등록 성공")
-        void should_createBoard_when_validRequest() {
-            // Given
-            CreateBoardRequest request = new CreateBoardRequest();
-            request.setTitle(TEST_TITLE);
-            request.setContent(TEST_CONTENT);
-            request.setAuthor(TEST_AUTHOR);
-
-            when(boardMapper.insert(any(Board.class))).thenReturn(1);
-
-            // When
-            boardService.createBoard(request);
-
-            // Then
-            verify(boardMapper).insert(any(Board.class));
-        }
-
-        @Test
-        @DisplayName("ID로 게시글 조회 성공")
-        void should_getBoard_when_validId() {
-            // Given
-            Board testBoard = new Board();
-            testBoard.setId(TEST_BOARD_ID);
-            testBoard.setTitle(TEST_TITLE);
-            testBoard.setViewCount(0);
-            when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(testBoard);
-
-            // When
-            Board result = boardService.getBoardById(TEST_BOARD_ID);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getTitle()).isEqualTo(TEST_TITLE);
-            verify(boardMapper).increaseViewCount(TEST_BOARD_ID);
-        }
-
-        @Test
-        @DisplayName("전체 게시글 목록 조회 성공")
-        void should_getAllBoards_when_requested() {
-            // Given
-            Board testBoard1 = new Board();
-            Board testBoard2 = new Board();
-            when(boardMapper.findAll()).thenReturn(Arrays.asList(testBoard1, testBoard2));
-
-            // When
-            List<Board> result = boardService.getAllBoards();
-
-            // Then
-            assertThat(result).hasSize(2);
-        }
-
-        @Test
-        @DisplayName("게시글 수정 성공")
-        void should_updateBoard_when_validRequest() {
-            // Given
-            Board existingBoard = new Board();
-            existingBoard.setId(TEST_BOARD_ID);
-            when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(existingBoard);
-
-            UpdateBoardRequest request = new UpdateBoardRequest();
-            request.setTitle("수정된 제목");
-            request.setContent("수정된 내용");
-
-            // When
-            boardService.updateBoard(TEST_BOARD_ID, request);
-
-            // Then
-            verify(boardMapper).update(any(Board.class));
-        }
-
-        @Test
-        @DisplayName("게시글 삭제 성공")
-        void should_deleteBoard_when_validId() {
-            // Given
-            Board existingBoard = new Board();
-            existingBoard.setId(TEST_BOARD_ID);
-            when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(existingBoard);
-
-            // When
-            boardService.deleteBoard(TEST_BOARD_ID);
-
-            // Then
-            verify(boardMapper).deleteById(TEST_BOARD_ID);
-        }
-    }
-
-    // ── Level 3: Exception ──
-    @Test
-    @DisplayName("존재하지 않는 게시글 조회 시 예외 발생")
-    void should_throwException_when_boardNotFound() {
-        // Given
-        when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(null);
-
-        // When & Then
-        assertThatThrownBy(() -> boardService.getBoardById(TEST_BOARD_ID))
-                .isInstanceOf(BoardNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 게시글 수정 시 예외 발생")
-    void should_throwException_when_updateNonExistentBoard() {
-        // Given
-        when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(null);
-        UpdateBoardRequest request = new UpdateBoardRequest();
-
-        // When & Then
-        assertThatThrownBy(() -> boardService.updateBoard(TEST_BOARD_ID, request))
-                .isInstanceOf(BoardNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 게시글 삭제 시 예외 발생")
-    void should_throwException_when_deleteNonExistentBoard() {
-        // Given
-        when(boardMapper.findById(TEST_BOARD_ID)).thenReturn(null);
-
-        // When & Then
-        assertThatThrownBy(() -> boardService.deleteBoard(TEST_BOARD_ID))
-                .isInstanceOf(BoardNotFoundException.class);
-    }
-}
-```
-
-이제 컴파일을 시도합니다:
+이제, **구현 코드가 없는 상태**에서 검증 스크립트를 실행하여 테스트가 **의도대로 실패하는지(Red 상태)** 확인합니다. 이는 매우 중요한 과정입니다.
 
 ```bash
-./gradlew compileTestJava
+./docs/ai-tdd-skills/verification/run-compile-test.sh com.nhcard.al.board.service.BoardService
 ```
 
-```
-> Task :compileTestJava FAILED
+> **이것이 올바른 `Red` 상태입니다!**
+>
+> 아직 `BoardService`와 같은 구현 클래스를 만들지 않았기 때문에 테스트 코드가 컴파일조차 될 수 없는 것이 당연합니다. 이 의도된 실패는 **"이제 이 테스트를 통과시킬 코드를 만들어야 한다"**는 명확한 개발 목표를 제시합니다.
 
-error: package com.nhcard.al.board.domain does not exist
-error: package com.nhcard.al.board.dto does not exist
-error: package com.nhcard.al.board.exception does not exist
-error: package com.nhcard.al.board.mapper does not exist
-error: package com.nhcard.al.board.service does not exist
-error: cannot find symbol: class Board
-error: cannot find symbol: class BoardService
-...
+`Red` 단계에서 AI가 생성한 `BoardServiceTest.java` 파일을 열어보세요. 이 코드는 우리가 앞으로 만들어야 할 코드가 **어떻게 사용되기를 기대하는지** 보여주는 "살아있는 설계도"입니다. 4.5절의 **"계층별 핵심 평가 포인트"** 가이드를 참조하여, 생성된 테스트가 Service 계층의 역할을 잘 정의하고 있는지 미리 검토하고 학습하십시오.
 
-BUILD FAILED in 2s
-```
+#### **Step 2: Green — 테스트를 통과하는 최소 코드 작성**
 
-**Red** 상태 확인. 아직 아무것도 구현하지 않았으니 당연합니다. 이제 하나씩 구현합니다.
+이제 **Red** 상태의 테스트를 통과시킬 수 있는 **최소한의 구현 코드**를 작성합니다. `Board`, `CreateBoardRequest`, `BoardMapper` 인터페이스, `BoardService` 클래스 등을 생성하고, 테스트가 요구하는 최소한의 로직만 구현합니다.
 
-##### Green — 최소 구현
-
-테스트를 통과시키기 위한 최소한의 코드를 작성합니다.
-
-**1) 도메인 클래스**
-
-```java
-// src/main/java/com/nhcard/al/board/domain/Board.java
-package com.nhcard.al.board.domain;
-
-public class Board {
-    private Long id;
-    private String title;
-    private String content;
-    private String author;
-    private int viewCount;
-
-    // getter, setter
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
-    public int getViewCount() { return viewCount; }
-    public void setViewCount(int viewCount) { this.viewCount = viewCount; }
-}
-```
-
-**2) DTO 클래스**
-
-```java
-// src/main/java/com/nhcard/al/board/dto/CreateBoardRequest.java
-package com.nhcard.al.board.dto;
-
-public class CreateBoardRequest {
-    private String title;
-    private String content;
-    private String author;
-    // getter, setter
-}
-
-// src/main/java/com/nhcard/al/board/dto/UpdateBoardRequest.java
-package com.nhcard.al.board.dto;
-
-public class UpdateBoardRequest {
-    private String title;
-    private String content;
-    // getter, setter
-}
-```
-
-**3) 예외 클래스**
-
-```java
-// src/main/java/com/nhcard/al/board/exception/BoardNotFoundException.java
-package com.nhcard.al.board.exception;
-
-public class BoardNotFoundException extends RuntimeException {
-    public BoardNotFoundException(String message) {
-        super(message);
-    }
-}
-```
-
-**4) Mapper 인터페이스**
-
-```java
-// src/main/java/com/nhcard/al/board/mapper/BoardMapper.java
-package com.nhcard.al.board.mapper;
-
-import com.nhcard.al.board.domain.Board;
-import org.apache.ibatis.annotations.Mapper;
-import java.util.List;
-
-@Mapper
-public interface BoardMapper {
-    Board findById(Long id);
-    List<Board> findAll();
-    int insert(Board board);
-    int update(Board board);
-    int deleteById(Long id);
-    void increaseViewCount(Long id);
-}
-```
-
-**5) Service 구현**
-
-```java
-// src/main/java/com/nhcard/al/board/service/BoardService.java
-package com.nhcard.al.board.service;
-
-import com.nhcard.al.board.domain.Board;
-import com.nhcard.al.board.dto.CreateBoardRequest;
-import com.nhcard.al.board.dto.UpdateBoardRequest;
-import com.nhcard.al.board.exception.BoardNotFoundException;
-import com.nhcard.al.board.mapper.BoardMapper;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class BoardService {
-
-    private final BoardMapper boardMapper;
-
-    public BoardService(BoardMapper boardMapper) {
-        this.boardMapper = boardMapper;
-    }
-
-    public void createBoard(CreateBoardRequest request) {
-        Board board = new Board();
-        board.setTitle(request.getTitle());
-        board.setContent(request.getContent());
-        board.setAuthor(request.getAuthor());
-        boardMapper.insert(board);
-    }
-
-    public Board getBoardById(Long id) {
-        Board board = boardMapper.findById(id);
-        if (board == null) {
-            throw new BoardNotFoundException("게시글을 찾을 수 없습니다. ID: " + id);
-        }
-        boardMapper.increaseViewCount(id);
-        return board;
-    }
-
-    public List<Board> getAllBoards() {
-        return boardMapper.findAll();
-    }
-
-    public void updateBoard(Long id, UpdateBoardRequest request) {
-        Board board = boardMapper.findById(id);
-        if (board == null) {
-            throw new BoardNotFoundException("게시글을 찾을 수 없습니다. ID: " + id);
-        }
-        board.setTitle(request.getTitle());
-        board.setContent(request.getContent());
-        boardMapper.update(board);
-    }
-
-    public void deleteBoard(Long id) {
-        Board board = boardMapper.findById(id);
-        if (board == null) {
-            throw new BoardNotFoundException("게시글을 찾을 수 없습니다. ID: " + id);
-        }
-        boardMapper.deleteById(id);
-    }
-}
-```
-
-이제 테스트를 실행합니다:
+모든 구현이 완료되었다고 생각되면, 다시 검증 스크립트를 실행합니다.
 
 ```bash
-./gradlew test --tests "com.nhcard.al.board.service.BoardServiceTest"
+./docs/ai-tdd-skills/verification/run-compile-test.sh com.nhcard.al.board.service.BoardService
 ```
 
-```
-> Task :test
+스크립트가 성공적으로 완료되면 **Green** 상태를 달성한 것입니다.
 
-BoardServiceTest > Level 1: Happy Case > 유효한 요청으로 게시글 등록 성공 PASSED
-BoardServiceTest > Level 1: Happy Case > ID로 게시글 조회 성공 PASSED
-BoardServiceTest > Level 1: Happy Case > 전체 게시글 목록 조회 성공 PASSED
-BoardServiceTest > Level 1: Happy Case > 게시글 수정 성공 PASSED
-BoardServiceTest > Level 1: Happy Case > 게시글 삭제 성공 PASSED
-BoardServiceTest > 존재하지 않는 게시글 조회 시 예외 발생 PASSED
-BoardServiceTest > 존재하지 않는 게시글 수정 시 예외 발생 PASSED
-BoardServiceTest > 존재하지 않는 게시글 삭제 시 예외 발생 PASSED
+#### **Step 3: Refactor — 코드 개선**
 
-8 tests completed, 8 passed
+**Green** 상태, 즉 테스트가 통과하는 안전한 상태를 유지하면서 코드의 구조를 개선합니다. 중복 코드를 제거하거나, 메서드를 분리하는 등의 리팩토링을 수행합니다.
 
-BUILD SUCCESSFUL in 5s
-```
-
-**Green** 상태 달성.
-
-##### Refactor — 개선
-
-테스트가 통과하는 상태를 유지하면서 코드를 개선합니다.
-
-예를 들어, Service에서 반복되는 "게시글 조회 + null 체크" 로직을 private 메서드로 추출:
-
-```java
-private Board findBoardOrThrow(Long id) {
-    Board board = boardMapper.findById(id);
-    if (board == null) {
-        throw new BoardNotFoundException("게시글을 찾을 수 없습니다. ID: " + id);
-    }
-    return board;
-}
-```
-
-리팩토링 후 테스트 재실행:
+리팩토링 후에는 **반드시 검증 스크립트를 다시 실행**하여 여전히 모든 테스트가 통과하는지(Green 유지) 확인해야 합니다.
 
 ```bash
-./gradlew test --tests "com.nhcard.al.board.service.BoardServiceTest"
+./docs/ai-tdd-skills/verification/run-compile-test.sh com.nhcard.al.board.service.BoardService
 ```
 
-```
-8 tests completed, 8 passed
-BUILD SUCCESSFUL
-```
+이 `Red-Green-Refactor` 사이클을 반복하여 모든 기능을 완성해 나갑니다.
 
-Green 유지 확인. Service 계층 TDD 1사이클 완료.
+### 4.3. Controller 및 Mapper 계층 TDD
 
----
+Service 계층 개발이 완료되면, 동일한 `Red-Green-Refactor` 사이클을 사용하여 Controller와 Mapper 계층의 개발을 진행합니다.
 
-### 4.3. Controller 계층 TDD
+1.  **Red**: `test-generator`에게 Controller/Mapper에 대한 요구사항을 전달하여 테스트를 생성하고, 검증 스크립트로 실패를 확인합니다.
+2.  **Green**: 테스트를 통과할 최소한의 Controller/Mapper 코드를 구현하고, 검증 스크립트로 통과를 확인합니다.
+3.  **Refactor**: 코드를 개선하고, 검증 스크립트로 통과 상태 유지를 확인합니다.
 
-Service 구현이 완료되었으면, Controller를 TDD로 개발합니다.
+### 4.4. (선택) 리뷰 에이전트로 품질 확인
 
-##### Red — 테스트 먼저 작성
-
-```
-> test-generator, BoardController 테스트 코드 생성
-
-요구사항:
-- POST /api/boards: 게시글 등록 (201 Created)
-- GET /api/boards/{id}: 게시글 조회 (200 OK)
-- GET /api/boards: 게시글 목록 (200 OK)
-- PUT /api/boards/{id}: 게시글 수정 (200 OK)
-- DELETE /api/boards/{id}: 게시글 삭제 (204 No Content)
-- 존재하지 않는 게시글 접근 시 404 Not Found
-```
-
-에이전트가 생성하는 Controller 테스트 예시:
-
-```java
-package com.nhcard.al.board.controller;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhcard.al.board.domain.Board;
-import com.nhcard.al.board.dto.CreateBoardRequest;
-import com.nhcard.al.board.exception.BoardNotFoundException;
-import com.nhcard.al.board.service.BoardService;
-
-@WebMvcTest(BoardController.class)
-class BoardControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private BoardService boardService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    @DisplayName("POST /api/boards - 게시글 등록 성공 (201)")
-    void should_createBoard_when_validRequest() throws Exception {
-        // Given
-        CreateBoardRequest request = new CreateBoardRequest();
-        request.setTitle("테스트 제목");
-        request.setContent("테스트 내용");
-        request.setAuthor("테스트작성자");
-
-        // When & Then
-        mockMvc.perform(post("/api/boards")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isCreated());
-
-        verify(boardService).createBoard(any(CreateBoardRequest.class));
-    }
-
-    @Test
-    @DisplayName("GET /api/boards/{id} - 게시글 조회 성공 (200)")
-    void should_getBoard_when_validId() throws Exception {
-        // Given
-        Board testBoard = new Board();
-        testBoard.setId(1L);
-        testBoard.setTitle("테스트 제목");
-        when(boardService.getBoardById(1L)).thenReturn(testBoard);
-
-        // When & Then
-        mockMvc.perform(get("/api/boards/{id}", 1L))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("테스트 제목"));
-    }
-
-    @Test
-    @DisplayName("GET /api/boards/{id} - 존재하지 않는 게시글 (404)")
-    void should_return404_when_boardNotFound() throws Exception {
-        // Given
-        when(boardService.getBoardById(999L))
-                .thenThrow(new BoardNotFoundException("게시글을 찾을 수 없습니다."));
-
-        // When & Then
-        mockMvc.perform(get("/api/boards/{id}", 999L))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
-}
-```
-
-컴파일 실패 (Red) → Controller 구현 (Green) → 리팩토링 (Refactor) 사이클을 반복합니다.
-
-##### Green — Controller 구현
-
-```java
-@RestController
-@RequestMapping("/api/boards")
-public class BoardController {
-
-    private final BoardService boardService;
-
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createBoard(@Valid @RequestBody CreateBoardRequest request) {
-        boardService.createBoard(request);
-    }
-
-    @GetMapping("/{id}")
-    public Board getBoardById(@PathVariable Long id) {
-        return boardService.getBoardById(id);
-    }
-
-    @GetMapping
-    public List<Board> getAllBoards() {
-        return boardService.getAllBoards();
-    }
-
-    @PutMapping("/{id}")
-    public void updateBoard(@PathVariable Long id,
-                             @Valid @RequestBody UpdateBoardRequest request) {
-        boardService.updateBoard(id, request);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBoard(@PathVariable Long id) {
-        boardService.deleteBoard(id);
-    }
-}
-```
-
-```bash
-./gradlew test --tests "com.nhcard.al.board.controller.BoardControllerTest"
-```
-
-```
-BoardControllerTest > POST /api/boards - 게시글 등록 성공 (201) PASSED
-BoardControllerTest > GET /api/boards/{id} - 게시글 조회 성공 (200) PASSED
-BoardControllerTest > GET /api/boards/{id} - 존재하지 않는 게시글 (404) PASSED
-...
-
-BUILD SUCCESSFUL
-```
-
----
-
-### 4.4. Mapper 계층 TDD
-
-Mapper는 Mock 기반 단위테스트로 진행합니다. Service 테스트에서 Mapper를 Mock으로 사용하고 있지만, Mapper 자체의 인터페이스 계약도 별도로 검증합니다.
-
-##### Red — 테스트 먼저 작성
-
-```
-> test-generator, BoardMapper 테스트 코드 생성
-```
-
-에이전트가 생성하는 Mapper 테스트 예시:
-
-```java
-package com.nhcard.al.board.mapper;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.nhcard.al.board.domain.Board;
-import java.util.Arrays;
-import java.util.Collections;
-
-@ExtendWith(MockitoExtension.class)
-class BoardMapperTest {
-
-    @Mock
-    private BoardMapper boardMapper;
-
-    // ── Level 1: Happy Case ──
-    @Nested
-    @DisplayName("Level 1: Happy Case")
-    class HappyCases {
-
-        @Test
-        @DisplayName("ID로 게시글 조회 성공")
-        void should_findBoard_when_validId() {
-            // Given
-            Board testBoard = new Board();
-            testBoard.setId(1L);
-            testBoard.setTitle("테스트 제목");
-            when(boardMapper.findById(1L)).thenReturn(testBoard);
-
-            // When
-            Board result = boardMapper.findById(1L);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getTitle()).isEqualTo("테스트 제목");
-        }
-
-        @Test
-        @DisplayName("게시글 등록 성공")
-        void should_insertBoard_when_validBoard() {
-            // Given
-            Board testBoard = new Board();
-            when(boardMapper.insert(any(Board.class))).thenReturn(1);
-
-            // When
-            int result = boardMapper.insert(testBoard);
-
-            // Then
-            assertThat(result).isEqualTo(1);
-        }
-    }
-
-    // ── Level 2: Edge Case ──
-    @Test
-    @DisplayName("존재하지 않는 ID로 조회 시 null 반환")
-    void should_returnNull_when_boardNotExists() {
-        // Given
-        when(boardMapper.findById(999L)).thenReturn(null);
-
-        // When
-        Board result = boardMapper.findById(999L);
-
-        // Then
-        assertThat(result).isNull();
-    }
-
-    @Test
-    @DisplayName("게시글이 없으면 빈 목록 반환")
-    void should_returnEmptyList_when_noBoardExists() {
-        // Given
-        when(boardMapper.findAll()).thenReturn(Collections.emptyList());
-
-        // When & Then
-        assertThat(boardMapper.findAll()).isEmpty();
-    }
-
-    // ── Level 4: Mutation Testing ──
-    @Test
-    @DisplayName("insert에 전달된 게시글 필드값 정밀 검증")
-    void should_passCorrectFields_when_insertBoard() {
-        // Given
-        ArgumentCaptor<Board> captor = ArgumentCaptor.forClass(Board.class);
-        Board testBoard = new Board();
-        testBoard.setTitle("테스트 제목");
-        testBoard.setContent("테스트 내용");
-
-        // When
-        boardMapper.insert(testBoard);
-
-        // Then
-        verify(boardMapper).insert(captor.capture());
-        Board captured = captor.getValue();
-        assertThat(captured.getTitle()).isEqualTo("테스트 제목");
-        assertThat(captured.getContent()).isEqualTo("테스트 내용");
-    }
-}
-```
-
-이 시점에서 컴파일하면 **Red** 상태입니다 (BoardMapper 인터페이스가 아직 없으므로).
-
-##### Green — Mapper 인터페이스 구현
-
-앞서 Service TDD 과정에서 이미 BoardMapper 인터페이스를 생성했으므로, 테스트가 바로 통과합니다:
-
-```bash
-./gradlew test --tests "com.nhcard.al.board.mapper.BoardMapperTest"
-```
-
-```
-BoardMapperTest > Level 1: Happy Case > ID로 게시글 조회 성공 PASSED
-BoardMapperTest > Level 1: Happy Case > 게시글 등록 성공 PASSED
-BoardMapperTest > 존재하지 않는 ID로 조회 시 null 반환 PASSED
-BoardMapperTest > 게시글이 없으면 빈 목록 반환 PASSED
-BoardMapperTest > insert에 전달된 게시글 필드값 정밀 검증 PASSED
-
-5 tests completed, 5 passed
-BUILD SUCCESSFUL
-```
-
-##### Refactor
-
-Mock 기반 테스트로 인터페이스 계약을 검증했습니다. MyBatis XML과의 실제 SQL 매핑 검증이 필요하면 `@MybatisTest` 기반 통합테스트를 별도로 작성합니다.
-
-### 4.5. 전체 커버리지 확인 + 리뷰
-
-모든 계층의 TDD가 완료되면 전체 커버리지를 확인합니다.
-
-```bash
-# 전체 테스트 + 커버리지 보고서 + 기준 검증
-./gradlew test jacocoTestReport jacocoTestCoverageVerification
-```
-
-```
-> Task :test
-> Task :jacocoTestReport
-> Task :jacocoTestCoverageVerification
-
-BUILD SUCCESSFUL in 15s
-```
-
-리뷰 에이전트로 품질 확인:
+모든 기능 구현 및 테스트가 완료된 후, `tdd-review` 에이전트를 사용하여 코드의 품질을 검증하고 개선점을 찾아볼 수 있습니다.
 
 ```bash
 > tdd-review, BoardServiceTest 리뷰
 ```
 
-```
-## TDD 리뷰 결과: BoardServiceTest
+> **참고: `tdd-review` 에이전트의 한계**
+> 이 에이전트는 코드의 구조, 스타일, 표준 패턴 준수 여부를 훌륭하게 검증합니다. 하지만, **비즈니스 로직의 미묘한 의미까지는 파악할 수 없습니다.** 예를 들어, 할인율을 10%로 검증해야 하는데 5%로 잘못 작성된 테스트는 찾아내지 못합니다. 최종적인 비즈니스 로직의 정확성은 항상 개발자가 직접 검토하고 책임져야 합니다.
 
-### 종합 점수: 95/100 (A등급)
+### 4.5. 생성된 테스트 코드 평가 가이드
 
-| 영역 | 점수 | 만점 |
-|---|---|---|
-| 구조 검증 | 29/30 | 30 |
-| 품질 검증 | 38/40 | 40 |
-| NH 규칙 | 28/30 | 30 |
+AI가 생성한 테스트 코드를 리뷰할 때는 해당 코드가 어떤 계층의 테스트인지 파악하고, 아래의 계층별 핵심 포인트를 중점적으로 확인해야 합니다.
 
-### 안티패턴 탐지
-안티패턴 없음
-```
+##### **1. Service 계층 테스트 (비즈니스 로직의 정확성 검증)**
+
+> **목표:** 외부 의존성을 완벽히 차단하고, 순수하게 서비스 클래스 내부의 **비즈니스 로직**이 모든 조건(분기, 예외 등)에 따라 정확하게 동작하는지 검증합니다.
+
+| 핵심 평가 포인트 | 상세 설명 |
+| :--- | :--- |
+| **의존성 완벽 격리** | `Mapper`, `Repository`, 다른 `Service` 등 모든 외부 의존성이 `@Mock`으로 처리되었는가? |
+| **비즈니스 로직 검증** | `if/else`, `for`, `switch` 등 모든 분기문을 통과하는 시나리오가 테스트되는가? (Edge Case) |
+| **상태 vs 행위 검증** | **(상태)** 값을 반환하는 메서드는 `assertThat`으로 반환 값을 검증하는가? <br> **(행위)** `void` 메서드는 `verify`를 사용해 의존 객체의 메서드 호출 여부를 검증하는가? |
+| **예외 시나리오 처리** | 비즈니스 규칙에 따라 `Exception`을 던지는 모든 경로에 대해 `assertThatThrownBy`로 검증하는가? |
+| **트랜잭션 경계** | (심화) 트랜잭션이 필요한 메서드에 `@Transactional`이 선언되어 있고, 테스트에서는 롤백이 잘 동작하는가? |
+
+##### **2. Controller 계층 테스트 (API 명세와 입출력 검증)**
+
+> **목표:** HTTP 요청부터 응답까지의 흐름을 격리하여 테스트합니다. Controller의 역할은 "요청을 잘 받고, Service에 잘 위임하며, 결과를 올바른 HTTP 응답으로 잘 변환하는가"에 있으므로, **비즈니스 로직은 절대 테스트하지 않습니다.**
+
+| 핵심 평가 포인트 | 상세 설명 |
+| :--- | :--- |
+| **Web Layer 격리** | `@WebMvcTest`를 사용하여 웹 계층 관련 빈만 로드하고, `@MockBean`으로 `Service`를 Mock 처리했는가? |
+| **HTTP 요청 모사** | `MockMvc`를 사용하여 `get()`, `post()`, `put()`, `delete()` 등 실제 HTTP 요청을 보내는가? |
+| **HTTP 응답 상태 검증** | `.andExpect(status().isOk())`, `.isCreated()`, `.isNotFound()` 등으로 정확한 HTTP 상태 코드를 반환하는지 검증하는가? |
+| **Request/Response Body 검증** | (Request) `JSON` 요청 본문을 직렬화하여 보내는가? <br> (Response) `jsonPath()`를 사용해 응답 `JSON`의 특정 필드 값을 검증하는가? |
+| **입력 유효성 검증** | `@Valid`와 관련된 잘못된 요청(예: 필드 누락) 시, `400 Bad Request` 상태를 반환하는지 테스트하는가? |
+
+##### **3. Mapper/Repository 계층 테스트 (데이터베이스 연동 검증)**
+
+> **목표:** 작성된 SQL 쿼리가 실제 데이터베이스(또는 내장 DB)와 상호작용하여 의도대로 데이터를 조회, 생성, 수정, 삭제하는지 검증합니다. **Mock을 사용하지 않는 통합 테스트**입니다.
+
+| 핵심 평가 포인트 | 상세 설명 |
+| :--- | :--- |
+| **DB 테스트 환경** | `@MybatisTest` 또는 `@DataJpaTest`를 사용하고, 테스트용 내장 데이터베이스(H2 등)로 실행되는가? |
+| **실제 객체 주입** | `@Autowired`로 실제 `Mapper` 객체를 주입받는가? (Mock 객체가 아님) |
+| **C.R.U.D 검증** | 데이터를 `insert`한 후, `findById`로 조회하여 필드 값이 일치하는지 검증하는가? `update` 후에도 동일하게 검증하는가? `delete` 후에는 조회 시 `null`이 반환되는지 검증하는가? |
+| **반환 값 검증** | `List`를 반환하는 쿼리가 데이터가 없을 때 빈 리스트(`isEmpty()`)를 반환하는지, 단일 객체를 반환하는 쿼리가 데이터가 없을 때 `null`을 반환하는지 검증하는가? |
+| **쿼리 조건 검증** | `WHERE` 절의 조건(예: `findByName`)이 정확하게 동작하여 원하는 데이터만 필터링하는지 검증하는가? |
+
+##### **4. Util/Domain 계층 테스트 (순수 로직 및 핵심 규칙 검증)**
+
+> **목표:** 프레임워크나 외부 의존성 없이, 특정 로직(계산, 포맷팅 등)이나 도메인 객체의 핵심 규칙이 순수하게 동작하는지 검증합니다. 가장 빠르고 간단한 단위 테스트입니다.
+
+| 핵심 평가 포인트 | 상세 설명 |
+| :--- | :--- |
+| **순수 JUnit 테스트** | Spring이나 Mockito 의존성 없이, 순수 `JUnit`만으로 테스트가 작성되었는가? |
+| **경계값(Edge Case) 집중**| `null`, `0`, 빈 문자열/리스트, 최대/최소값 등 비정상적이거나 극단적인 입력 값에 대해 의도대로 동작하는지 집중적으로 테스트하는가? |
+| **다양한 입력 값 테스트** | `@ParameterizedTest`를 사용하여 여러 개의 다른 입력과 그에 따른 예상 결과를 한 번에 테스트하여 효율성을 높였는가? |
+| **불변성(Immutability)** | (Domain) 객체의 상태를 변경하는 메서드를 호출했을 때, 기존 객체가 아닌 새로운 상태의 객체를 반환하는가? (필요시) |
+
+### 4.6. 심화 학습: Outside-In TDD (인수 테스트 주도 개발)
+
+본 가이드는 Service 계층부터 시작하는 **'Inside-Out'** 방식을 다루었습니다. 이는 단위 테스트 중심의 전통적인 TDD 접근법입니다.
+
+하지만 여러 기능이 복합적으로 얽힌 복잡한 사용자 시나리오를 개발할 때는, 최종 사용자의 관점에서 가장 바깥 계층(예: Controller의 API)부터 실패하는 테스트를 작성하고, 이를 통과시키기 위해 필요한 내부(Service, Domain)를 점진적으로 구현해나가는 **"Outside-In" TDD 방식(런던파 TDD)**이 더 효과적일 수 있습니다.
+
+이 경우, 첫 `test-generator` 프롬프트는 "사용자가 게시글을 작성하고 목록 페이지로 이동한다"와 같이, API 레벨의 전체 시나리오를 담게 될 것입니다. 이는 자연스럽게 최종 목표인 인수 테스트(Acceptance Test)를 먼저 작성하는 효과를 가집니다. 프로젝트의 특성과 요구사항의 복잡도에 따라 적절한 TDD 방식을 선택하여 활용해 보십시오.
 
 ---
 
-## 5. How — 실전 팁
+## 5. TDD 실전 팁
 
-### 5.1. 어떤 테스트를 먼저 작성할 것인가
+### 5.1. 테스트 작성 우선순위
 
-```
-1순위: Happy Case (정상 동작) — 기본 기능이 동작하는지 확인
-2순위: Exception (예외 경로) — 비정상 상황에서 올바르게 실패하는지 확인
-3순위: Edge Case (경계값) — null, 빈 값, 최대값 등
-4순위: Mutation (변이 감지) — 코드 변경 시 테스트가 감지하는지
-```
+테스트 작성 시 다음 우선순위를 고려하여 효율성을 높일 수 있습니다.
 
-### 5.2. AI 에이전트 프롬프트 잘 쓰는 법
+1.  **Happy Case (정상 동작)**: 시스템의 기본 기능이 의도대로 동작하는지 확인하는 것이 가장 중요합니다.
+2.  **Exception (예외 경로)**: 비정상적인 상황(예: 데이터 없음, 유효성 검증 실패)에서 시스템이 올바르게 실패하거나 예외를 처리하는지 확인합니다.
+3.  **Edge Case (경계값)**: `null`, 빈 값, 최대/최소값 등 파라미터의 경계 조건에서 코드가 안정적으로 동작하는지 검증합니다.
+4.  **Mutation (변이 감지)**: 코드 변경 시 테스트가 이를 정확히 감지하여 회귀를 방지하는지 확인하는 심화된 테스트입니다。
 
-| 나쁜 예 | 좋은 예 |
+### 5.2. 효과적인 AI 에이전트 프롬프트 작성법
+
+AI 에이전트에게 명확하고 구체적인 지시를 전달하는 것이 고품질 테스트 코드 생성의 핵심입니다.
+
+| 비효율적인 프롬프트 예시 | 효과적인 프롬프트 예시 |
 |---|---|
 | "테스트 만들어줘" | "BoardService 테스트 코드 생성" |
 | "전부 다 테스트" | "service 패키지 전체 테스트 코드 생성" |
-| (아무 설명 없이 클래스명만) | 요구사항과 함께 클래스명 제공 |
+| (아무 설명 없이 클래스명만 제공) | 요구사항과 함께 클래스명 제공 (예: `"BoardService 게시글 등록 기능 테스트 코드 생성, 요구사항: 제목, 내용, 작성자를 입력받아 게시글 생성"`) |
 
-**에이전트에게 제공하면 좋은 정보**:
-
-```
-- 클래스명 또는 패키지명
-- 주요 요구사항 (특히 신규 기능의 경우)
-- 특별히 주의할 점 (예: "비밀번호 암호화 검증 필수")
-```
+**AI 에이전트에게 제공하면 좋은 정보**:\
+\- 테스트를 생성할 **클래스명 또는 패키지명**\
+- 개발하려는 기능의 **주요 요구사항** (특히 신규 기능의 경우 상세하게)\
+- 테스트 시 **특별히 주의할 점** (예: "비밀번호 암호화 검증 필수", "개인정보 마스킹 로직 확인")
 
 ### 5.3. 테스트가 설계를 이끄는 사례
 
@@ -1102,7 +467,7 @@ TDD로 테스트를 먼저 작성하다 보면 다음과 같은 설계 개선이
 
 ---
 
-## 6. 트러블슈팅 & FAQ
+## 6. 트러블슈팅 및 FAQ
 
 ### Q1. Red 단계에서 테스트가 이미 통과해요
 
@@ -1156,7 +521,7 @@ TDD로 테스트를 먼저 작성하다 보면 다음과 같은 설계 개선이
 
 ---
 
-## 7. Next — TDD 문화 확산
+## 7. TDD 문화 확산 전략
 
 ### 7.1. 팀 컨벤션 수립
 
@@ -1188,15 +553,27 @@ TDD를 팀에 도입할 때 다음 컨벤션을 합의합니다.
 
 이 명령어가 실패하면 배포가 차단되므로, 테스트 없는 코드는 배포할 수 없습니다.
 
-### 7.3. TDD 문화의 성숙도
+### 7.3. TDD 문화 성숙도 레벨
 
-```
-Level 0: 테스트 없음
-Level 1: 일부 코드에 테스트 존재 (AI 에이전트로 생성)     ← Phase 1
-Level 2: 신규 코드는 TDD로 개발                          ← Phase 2
-Level 3: CI/CD에 테스트 게이트 적용, PR 리뷰에 테스트 포함
-Level 4: "테스트 없는 코드 = 미완성 코드" 라는 인식 정착   ← 최종 목표
-```
+TDD 문화가 팀 내에 정착되는 과정을 다음 레벨로 구분하여 인지하고, 점진적인 발전을 추구할 수 있습니다.
 
-> **"100% 커버리지가 목표가 아닙니다.**
-> **테스트를 작성하는 것이 자연스러운 개발 습관이 되는 것이 목표입니다."**
+| 레벨 | 설명 |
+|---|---|
+| **Level 0** | 테스트 코드 없음 |
+| **Level 1** | 일부 코드에 테스트 코드 존재 (AI 에이전트로 생성 시작) |
+| **Level 2** | 신규 코드는 TDD 방식으로 개발 (테스트 먼저 작성) |
+| **Level 3** | CI/CD 파이프라인에 테스트 자동화 게이트 적용, PR 리뷰에 테스트 품질 포함 |
+| **Level 4** | 팀 내에서 "테스트 없는 코드 = 미완성 코드"라는 인식이 기본 개발 문화로 정착 |
+
+> **"100% 커버리지를 처음부터 목표로 할 필요는 없습니다.**
+> **테스트 코드를 작성하는 것이 개발 과정의 자연스러운 습관이 되는 것이 중요합니다."**
+
+### 7.4. AI 스킬 문서 개선 프로세스
+
+AI 에이전트의 성능은 `docs/ai-tdd-skills`에 포함된 스킬 문서의 품질에 직접적인 영향을 받습니다. 팀 전체가 이 지식 베이스를 지속적으로 개선해 나가는 것이 중요합니다.
+
+1.  **문제 발견**: `test-generator`가 특정 패턴을 반복적으로 잘못 생성하거나, 특정 규칙을 누락하는 것을 발견합니다.
+2.  **팀 논의**: 발견된 문제를 팀과 공유하고, 어떤 스킬 문서(예: `templates/service-test.md` 또는 `constraints/nh-rules.md`)를 어떻게 개선할지 논의하여 합의합니다.
+3.  **스킬 문서 수정 및 PR**: 담당자가 합의된 내용에 따라 스킬 문서를 수정한 후, 변경 사항에 대한 Pull Request(PR)를 생성합니다.
+4.  **동료 리뷰**: 코드 리뷰와 동일하게, 다른 팀원들이 스킬 문서의 변경 내용이 적절한지 리뷰합니다.
+5.  **병합 및 전파**: 리뷰가 완료되면 마스터 브랜치에 병합하여 모든 팀원이 개선된 AI 스킬을 사용할 수 있도록 합니다.

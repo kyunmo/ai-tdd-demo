@@ -7,16 +7,20 @@ import nh.ai.tdd.demo.exception.UserNotFoundException;
 import nh.ai.tdd.demo.mapper.UserMapper;
 import nh.ai.tdd.demo.util.MaskingUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
 
     private final UserMapper userMapper;
+    private final RestTemplate restTemplate;
 
-    public UserService(UserMapper userMapper) {
+    public UserService(UserMapper userMapper, RestTemplate restTemplate) {
         this.userMapper = userMapper;
+        this.restTemplate = restTemplate;
     }
 
     public User createUser(CreateUserRequest request) {
@@ -25,11 +29,17 @@ public class UserService {
             throw new DuplicateEmailException(request.getEmail());
         }
 
+        // 외부 API 호출하여 externalId 받아오기
+        @SuppressWarnings("unchecked")
+        Map<String, String> response = restTemplate.getForObject("http://localhost:8080/mock-api/external-system/user-info", Map.class);
+        String externalId = response != null ? response.get("externalId") : null;
+
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setPhoneNumber(request.getPhoneNumber());
+        user.setExternalId(externalId); // 받아온 externalId 설정
 
         userMapper.insert(user);
         return user;

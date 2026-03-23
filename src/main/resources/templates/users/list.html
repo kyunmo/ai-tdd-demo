@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사용자 목록</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .header { border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header a { text-decoration: none; color: #333; font-size: 24px; font-weight: bold; }
+        .nav ul { list-style: none; padding: 0; margin: 0; display: flex; }
+        .nav li { margin-left: 15px; }
+        .nav a { text-decoration: none; color: #007bff; padding: 5px 10px; border: 1px solid #007bff; border-radius: 5px; }
+        .nav a.active { background-color: #007bff; color: white; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; border: 1px solid #ddd; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/">AI TDD 데모</a>
+        <nav class="nav">
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/users" class="active">사용자 목록</a></li>
+                <li><a href="/notices">공지사항</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>사용자 목록</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>외부 시스템 ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.name}">홍길동</td>
+            <td th:text="${user.email}">test@example.com</td>
+            <td th:text="${user.externalId}">ext-12345</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

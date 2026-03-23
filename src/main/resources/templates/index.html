@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AI TDD 데모</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .header { border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header a { text-decoration: none; color: #333; font-size: 24px; font-weight: bold; }
+        .nav ul { list-style: none; padding: 0; margin: 0; display: flex; }
+        .nav li { margin-left: 15px; }
+        .nav a { text-decoration: none; color: #007bff; padding: 5px 10px; border: 1px solid #007bff; border-radius: 5px; }
+        .nav a.active { background-color: #007bff; color: white; }
+        .hero { background-color: #e9ecef; padding: 40px; border-radius: 10px; margin-bottom: 20px; }
+        .hero h1 { font-size: 36px; margin-bottom: 15px; }
+        .hero p { font-size: 18px; margin-bottom: 20px; }
+        .button { display: inline-block; padding: 10px 20px; text-decoration: none; color: white; background-color: #007bff; border-radius: 5px; margin-right: 10px; }
+        .button.secondary { background-color: #6c757d; }
+    </style>
+</head>
+<body>
+<div style="max-width: 960px; margin: 0 auto; padding: 20px;">
+    <header class="header">
+        <a href="/">AI TDD 데모</a>
+        <nav class="nav">
+            <ul>
+                <li><a href="/" class="active">홈</a></li>
+                <li><a href="/users">사용자 목록</a></li>
+                <li><a href="/notices">공지사항</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>AI TDD 데모 프로젝트</h1>
+        <p>이 프로젝트는 AI 에이전트를 활용한 테스트 주도 개발(TDD)을 시연하기 위한 샘플입니다. 외부 API 연동 시뮬레이션 및 웹 화면을 통해 기능을 확인할 수 있습니다.</p>
+        <a href="/users" class="button">사용자 목록 보기</a>
+        <a href="/notices" class="button secondary">공지사항 보기</a>
+    </div>
+</div>
+</body>
+</html>

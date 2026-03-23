@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 목록</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .header { border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header a { text-decoration: none; color: #333; font-size: 24px; font-weight: bold; }
+        .nav ul { list-style: none; padding: 0; margin: 0; display: flex; }
+        .nav li { margin-left: 15px; }
+        .nav a { text-decoration: none; color: #007bff; padding: 5px 10px; border: 1px solid #007bff; border-radius: 5px; }
+        .nav a.active { background-color: #007bff; color: white; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .list-group { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; background-color: white; }
+        .list-group-item { display: block; padding: 15px; border-bottom: 1px solid #eee; text-decoration: none; color: #333; }
+        .list-group-item:last-child { border-bottom: none; }
+        .list-group-item:hover { background-color: #f0f0f0; }
+        .list-group-item-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .list-group-item-header h5 { margin: 0; font-size: 18px; }
+        .list-group-item-header small { color: #6c757d; }
+        .list-group-item p { margin-bottom: 5px; color: #555; }
+        .list-group-item small { color: #6c757d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/">AI TDD 데모</a>
+        <nav class="nav">
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/users">사용자 목록</a></li>
+                <li><a href="/notices" class="active">공지사항</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>공지사항 목록</h1>
+    <div class="list-group">
+        <a th:each="notice : ${notices}" th:href="@{/notices/{id}(id=${notice.id})}" class="list-group-item">
+            <div class="list-group-item-header">
+                <h5 th:text="${notice.title}">공지사항 제목</h5>
+                <small th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}">2026-03-23</small>
+            </div>
+            <p th:text="${#strings.abbreviate(notice.content, 100)}">공지사항 내용 미리보기...</p>
+            <small th:text="${'작성자: ' + notice.author}">작성자</small>
+        </a>
+    </div>
+</div>
+</body>
+</html>
